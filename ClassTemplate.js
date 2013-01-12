@@ -1,6 +1,9 @@
 window.a5s = typeof window.a5s == "undefined"? {}: window.a5s;
 
 /**
+ * 
+ * @singleton
+ * @class
  * @requires HTTPRequest.js
  * @requires CustomEvents.js
  */
@@ -88,6 +91,10 @@ var ClassTemplate = ( function( domain ) {
 					o += RegExp.leftContext.substr(preIndex) + v;
 					preIndex = re.lastIndex;
 
+				}
+				
+				if ( o.length <= 0 ) {
+				    return template;
 				}
 
 				o += RegExp.rightContext;
