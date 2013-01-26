@@ -11,6 +11,9 @@
         "PhantomJS",
         "CSSLint"
     ],
+    "launch_in_ci": [
+        "PhantomJS"
+    ],
     "src_files": [
         "test/ut.js",
         "*.js",
