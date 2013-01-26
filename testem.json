@@ -12,6 +12,7 @@
         "CSSLint"
     ],
     "src_files": [
+        "test/ut.js",
         "*.js",
         "test/specs/**/*.js"
     ],
