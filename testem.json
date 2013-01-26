@@ -1,5 +1,5 @@
 {
-    "launchers": {
+    "launchers-disabled": {
         "JasmineNode": {
             "command": "jasmine-node test/node"
         },
