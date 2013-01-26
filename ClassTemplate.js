@@ -1,16 +1,20 @@
 window.a5s = typeof window.a5s == "undefined"? {}: window.a5s;
 
 /**
+ * 
+ * @singleton
+ * @class
  * @requires HTTPRequest.js
  * @requires CustomEvents.js
  */
 var ClassTemplate = ( function( domain ) {
 
-	var uidI       = 0,
-	    queue      = {},
-	    templates  = {},
-		types      = {},
-		re         = /\${([^}]+)}/gi;
+	var uidI           = 0,
+	    queue          = {},
+	    templates      = {},
+		types          = {},
+		re             = /\${([^}]+)}/gi,
+	    tempTemplate   = "<article id=\"${id}\">Loading...</article>";
 
 	helper = {
 
@@ -62,7 +66,56 @@ var ClassTemplate = ( function( domain ) {
 				}
 
 			},
-			
+
+		    /**
+             * Render the score as content of the 'target' node.
+             * 
+             */
+            renderTemplate : function( templateName, values, node, callback, queue ) {
+    
+                var t = ClassTemplate.getTemplate( templateName );
+
+                if ( t === null ) {
+    
+                    if ( queue ) {
+    
+                        queue.push( {
+                            templateName:   templateName,
+                            values:         values,
+                            node:           node,
+                            callback:       callback
+                        } );
+                        
+                        // Setup handler to wait for template...
+                        var uid = ce.attachEvent( "template.finished", function( eventtype,
+                                template ) {
+                            if (template.type === templateName) {
+                                while (queue.length) {
+                                    var v = queue.shift( );
+                                    renderScore( v.templateName, v.values, v.node, v.callback );
+                                }
+                                ce.detachEvent( uid );
+                            }
+                        } );
+    
+                    }
+    
+                    t = tempTemplate;
+    
+                }
+                if ( node ) {
+    
+                    node.innerHTML = ClassTemplate.fillTemplate( t, values );
+    
+                    if (t !== tempTemplate) {
+                        if ( callback ) callBack();
+                    }
+    
+                } else
+                    throw "No target-node specified!!!";
+    
+            },
+
 			addTemplate : function( type, template ) {
 
 				templates[ type ] = template;
@@ -88,6 +141,10 @@ var ClassTemplate = ( function( domain ) {
 					o += RegExp.leftContext.substr(preIndex) + v;
 					preIndex = re.lastIndex;
 
+				}
+				
+				if ( o.length <= 0 ) {
+				    return template;
 				}
 
 				o += RegExp.rightContext;
