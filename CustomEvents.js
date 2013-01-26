@@ -97,7 +97,7 @@
 		
 		detachEvent: function( uid ) {
 
-		    var handlers = getQueue( this, eid );
+		    var handlers = getQueue( this, uid );
 		    handlers[uid] = null;
 
 		}

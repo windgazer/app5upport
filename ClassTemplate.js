@@ -76,7 +76,8 @@ var ClassTemplate = ( function( domain ) {
                 var t = ClassTemplate.getTemplate( templateName );
 
                 if ( t === null ) {
-    
+
+                    //Setup delayed rendering...
                     if ( queue ) {
     
                         queue.push( {
@@ -92,7 +93,7 @@ var ClassTemplate = ( function( domain ) {
                             if (template.type === templateName) {
                                 while (queue.length) {
                                     var v = queue.shift( );
-                                    renderScore( v.templateName, v.values, v.node, v.callback );
+                                    ClassTemplate.renderTemplate( v.templateName, v.values, v.node, v.callback );
                                 }
                                 ce.detachEvent( uid );
                             }
@@ -108,7 +109,7 @@ var ClassTemplate = ( function( domain ) {
                     node.innerHTML = ClassTemplate.fillTemplate( t, values );
     
                     if (t !== tempTemplate) {
-                        if ( callback ) callBack();
+                        if ( callback ) callback();
                     }
     
                 } else
