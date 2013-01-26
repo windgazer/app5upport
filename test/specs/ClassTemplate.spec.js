@@ -63,5 +63,40 @@ describe("ClassTemplate", function() {
 		expect( tmplt ).toBe( t3 );
 
 	});
+	
+	describe(".renderTemplate", function() {
+
+	    it("can parse delayed when template has not yet been loaded.", function() {
+
+	        ClassTemplate.reset();
+	        var node = document.createDocumentFragment(),
+	            calledback = false,
+	            done = function() {
+	                calledback = true;
+	            };
+
+	        runs( function() {
+	            ClassTemplate.renderTemplate( tt, {
+	                title: "myTitle",
+	                id : "myId",
+	                value : "myValue"
+	            }, node, done, new Array() );
+	            expect( node.innerHTML ).toBe( "<article id=\"myId\">Loading...</article>" );
+	            expect( ClassTemplate.getTemplate( tt ) ).toBe(null);
+	            ClassTemplate.loadTemplate(tt);
+	        });
+
+	        waitsFor(function() {
+	            return calledback;
+	        }, "The template should be available", 500);
+
+
+            runs( function() {
+                expect( node.innerHTML ).toBe( t2 );
+            });
+
+	    });
+
+	});
 
 });

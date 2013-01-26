@@ -1,0 +1,21 @@
+{
+
+  "name":"app5upport",
+  "author": "Martin 'Windgazer' Reurings <martin@windgazer.nl>",
+  "version":"0.0.2",
+
+  "dependencies":{
+
+  },
+
+  "devDependencies":{
+
+    "jasmine-node":"",
+    "testem":"",
+    "csslint":""
+
+  },
+
+  "engine": "node 0.8"
+
+}
