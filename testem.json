@@ -1,5 +1,5 @@
 {
-    "launchers": {
+    "launchers-disabled": {
         "JasmineNode": {
             "command": "jasmine-node test/node"
         },
@@ -10,6 +10,9 @@
     "launch_in_dev": [
         "PhantomJS",
         "CSSLint"
+    ],
+    "launch_in_ci": [
+        "PhantomJS"
     ],
     "src_files": [
         "test/ut.js",
