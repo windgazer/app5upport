@@ -29,6 +29,30 @@
 		registry[this.id] = [];
 	};
 	
+	function getQueue( ce, eid ) {
+
+        var reg = registry[ ce.id ];
+        
+        if ( reg === null || typeof reg === "undefined" ) {
+
+            reg = [];
+            registry[ ce.id ] = reg;
+
+        }
+        
+        var handlers = reg[ eid ];
+
+        if ( handlers === null || typeof handlers === "undefined" ) {
+
+            handlers = [];
+            reg[ eid ] = handlers;
+
+        }
+        
+        return handlers;
+
+	}
+	
 	CustomEvents.prototype = {
 
 		fireEvent: function( eid, eInfo ) {
@@ -51,7 +75,7 @@
 							sid = self.id,
 							t = i * 10;
 
-						hf( lid, linfo, sid );
+                        if ( hf ) hf( lid, linfo, sid );
 
 					}
 
@@ -65,25 +89,16 @@
 
 			Console.log("Attaching '" + eid + "' event.")
 
-			var reg = registry[ this.id ];
-			
-			if ( reg === null || typeof reg === "undefined" ) {
+			var handlers = getQueue( this, eid );
 
-				reg = [];
-				registry[ this.id ] = reg;
+			return handlers.push( handler );
 
-			}
-			
-			var handlers = reg[ eid ];
+		},
+		
+		detachEvent: function( uid ) {
 
-			if ( handlers === null || typeof handlers === "undefined" ) {
-
-				handlers = [];
-				reg[ eid ] = handlers;
-
-			}
-			
-			handlers.push( handler );
+		    var handlers = getQueue( this, uid );
+		    handlers[uid] = null;
 
 		}
 
