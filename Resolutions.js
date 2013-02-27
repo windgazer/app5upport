@@ -16,6 +16,7 @@
 	 * @author Martin "Windgazer" Reurings
 	 * @class
 	 * @requires Events
+     * @todo Add unit-tests, if I can :)
 	 */
 	var Resolutions = {
 		RESOLUTION_LANDSCAPE : 4,
