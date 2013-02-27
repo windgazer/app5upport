@@ -1,0 +1,26 @@
+{
+    "launchers-disabled": {
+        "JasmineNode": {
+            "command": "jasmine-node test/node"
+        },
+        "CSSLint": {
+            "command": "csslint css"
+        }
+    },
+    "launch_in_dev": [
+        "PhantomJS",
+        "CSSLint"
+    ],
+    "launch_in_ci": [
+        "PhantomJS"
+    ],
+    "src_files": [
+        "test/ut.js",
+        "*.js",
+        "test/specs/**/*.js"
+    ],
+    "watch_files": [
+        "*.js",
+        "**/*.css"
+    ]
+}
