@@ -24,7 +24,7 @@ describe("ClassTemplate", function() {
 		
 		waitsFor(function() {
 			return ClassTemplate.getTemplate(tt) !== null;
-		}, "The template should be available", 500);
+		}, "The template should be available", 1500);
 		
 		runs(function() {
 			var tmplt = ClassTemplate.getTemplate(tt);
@@ -76,20 +76,21 @@ describe("ClassTemplate", function() {
 	            };
 
 	        runs( function() {
+
 	            ClassTemplate.renderTemplate( tt, {
 	                title: "myTitle",
 	                id : "myId",
 	                value : "myValue"
-	            }, node, done, new Array() );
+	            }, node ).then( done );
 	            expect( node.innerHTML ).toBe( "<article id=\"myId\">Loading...</article>" );
 	            expect( ClassTemplate.getTemplate( tt ) ).toBe(null);
 	            ClassTemplate.loadTemplate(tt);
+
 	        });
 
 	        waitsFor(function() {
 	            return calledback;
-	        }, "The template should be available", 500);
-
+	        }, "The template should be available", 1500);
 
             runs( function() {
                 expect( node.innerHTML ).toBe( t2 );
