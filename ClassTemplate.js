@@ -69,19 +69,22 @@ var ClassTemplate = ( function( domain ) {
     				var url = getTemplatePath( type );
 
 					var that = this;
-					var request = new HTTPRequest( function( wrapper ) {
+					var request = new HTTPRequest( false );
 
-						var txt = wrapper.httpRequest.responseText;
-						that.addTemplate( type, txt );
+					that.trigger( "template.queued", {type: type, url: url} );
+					request.doGet( url ).then( function( e ) {
+
+					    //console.log( "HTTPRequest is finished :)", that, loader );
+                        var wrapper = e.request,
+                            txt = wrapper.httpRequest.responseText;
+
+                        that.addTemplate( type, txt );
                         that.trigger("template.finished", {type: type, template: txt});
                         loader.trigger("template.finished", {type: type, template: txt});
                         loader.resolve( {type: type, template: txt} );
-						delete loaders[ type ];
+                        delete loaders[ type ];
 
-					}, false );
-
-					that.trigger( "template.queued", {type: type, url: url} );
-					request.doGet( url );
+                    } );
 
     				loaders[ type ] = loader;
 
