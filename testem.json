@@ -16,6 +16,7 @@
     ],
     "src_files": [
         "test/ut.js",
+        "rsvp/browser/rsvp.js",
         "*.js",
         "test/specs/**/*.js"
     ],
