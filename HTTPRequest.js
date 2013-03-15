@@ -1,13 +1,31 @@
 var HTTPRequest = (function() {
 	
-	var changeHandler = function( request ) {
-		var httpRequest = request.httpRequest;
-		// Completed httpRequest
+	function changeHandler( request, promise ) {
+
+	    var httpRequest = request.httpRequest;
+
+	    // Completed httpRequest
 		if (httpRequest.readyState==4) {
-			// Switch status values
-			if (request.handlers[httpRequest.status]) request.handlers[httpRequest.status](request);
-			else console.error("Error: 48877378378." + httpRequest.status + "\nMissing status handler for XMLHttpRequest.");
+
+		    // Switch status values
+			//if ( request.handlers[ httpRequest.status ] ) request.handlers[ httpRequest.status ]( request );
+		    promise.resolve( { status: httpRequest.status, request: request } );
+
 		}
+
+	};
+
+	function setPromise( wrapper, promise ) {
+
+        if (wrapper.httpRequest!=false) { //We have an accual httprequest object
+
+            //Adding a handler for statechanges
+            wrapper.httpRequest.onreadystatechange = function( ) {
+                changeHandler( wrapper, promise );
+            }
+
+        }
+
 	};
 
 	/**
@@ -16,16 +34,16 @@ var HTTPRequest = (function() {
 	 * @version 2.0.121207
 	 * @constructor
 	 */
-	function HttpRequestWrapper( onSuccess, debug ) {
+	function HttpRequestWrapper( debug ) {
 
 		this.debug = debug?true:false;
 		this.handlers = {};
-		this.handlers[0] = typeof onSuccess !== "undefined"? onSuccess: function ( requestWrapper ) {
-			console.error( "File-system return code is 0 and currently not handled!!", requestWrapper );
-		};
-		this.handlers[200] = typeof onSuccess !== "undefined"? onSuccess: function ( requestWrapper ) {
-			console.error( "Default success readystate of 200 should be handled!!!", requestWrapper );
-		};
+//		this.handlers[0] = typeof onSuccess !== "undefined"? onSuccess: function ( requestWrapper ) {
+//			console.error( "File-system return code is 0 and currently not handled!!", requestWrapper );
+//		};
+//		this.handlers[200] = typeof onSuccess !== "undefined"? onSuccess: function ( requestWrapper ) {
+//			console.error( "Default success readystate of 200 should be handled!!!", requestWrapper );
+//		};
 
 		//create the httprequest object, first in conditional IE statement, then for the compliant browsers.
 		//Code adapted from: http://jibbering.com/2002/4/httprequest.html
@@ -48,40 +66,41 @@ var HTTPRequest = (function() {
 		  this.httpRequest = new XMLHttpRequest();
 		}
 
-		if (this.httpRequest!=false) { //We have an accual httprequest object
-			var self = this;
-			//Adding a handler for statechanges
-			this.httpRequest.onreadystatechange=function() {
-				changeHandler(self);
-			}
-		}
-	
 	}
 	
 	HttpRequestWrapper.prototype = {
-		/**
+
+	    /**
 		 * Just a little shortcut, I always think of canceling.
 		 * The official method is abort...
 		 */
 		cancel: function() {
 			this.httpRequest.abort();
 		},
+
 		/**
 		 * A convenience method to open a request. Will show a debug message
 		 * if so indicated upon creation of a new wrapper.
 		 * @private
 		 */
 		openRequest: function(request, url, threaded) {
-				if (this.debug)  this.httpRequest.open(request,prompt("Request url",url),threaded);
-				else this.httpRequest.open(request,url,threaded);
+		    var promise = new RSVP.Promise();
+		    setPromise( this, promise )
+
+		    if (this.debug)  this.httpRequest.open(request,prompt("Request url",url),threaded);
+			else this.httpRequest.open(request,url,threaded);
+
+		    return promise;
 		},
+
 		/**
 		 * A convenience method to send a request.Will first open the request
 		 * and subsequently send the content.
 		 * @private
 		 */
 		sendRequest: function(request, url, threaded, content, customHeaders) {
-			this.openRequest(request, url, threaded);
+            var promise = this.openRequest(request, url, threaded);
+
 			if (customHeaders) {
 				for(var i = 0; i < customHeaders.length; i++) {
 					var header = customHeaders[i];
@@ -89,7 +108,10 @@ var HTTPRequest = (function() {
 				}
 			}
 			this.httpRequest.send(content);
+
+            return promise;
 		},
+
 		/**
 		 * A convenience method to get a request. This is a non-threaded method
 		 * and not advisable for everyday use...
@@ -101,10 +123,11 @@ var HTTPRequest = (function() {
 			if (this.httpRequest!=false) {
 				this.target = target;
 				var request = content==null?"GET":"POST";
-				this.sendRequest(request,url,false,content); //Don't use a handler, non-threaded, browser will freeze until response is received in full.
+				return this.sendRequest(request,url,false,content); //Don't use a handler, non-threaded, browser will freeze until response is received in full.
 				if (debug) alert(httpRequest.getAllHeaders() + "\nResponse size: " + httpRequest.responseText.length);
 			}
 		},
+
 		/**
 		 * This method is intended for use of posting a form.
 		 * When completed this method will read the form, encode it's name/value
@@ -139,10 +162,11 @@ var HTTPRequest = (function() {
 					}
 				}
 				//Send a 'POST' request.
-				this.doPost(form.action, form, content);
-				alert("This method has not been implemented properly, currently no data is accually posted!");
+                alert("This method has not been implemented properly, currently no data is accually posted!");
+				return this.doPost(form.action, form, content);
 			}
 		},
+
 		/**
 		 * This method performs a 'POST' request. It's a threaded request.
 		 * This is the default httprequest taken by a browser when it
@@ -153,7 +177,7 @@ var HTTPRequest = (function() {
 		 * @param {String} content The content of the post-request.
 		 */
 		doPost: function(url, target, content) {
-			this.doRequest(
+			return this.doRequest(
 				url,
 				"POST",
 				target,
@@ -161,6 +185,7 @@ var HTTPRequest = (function() {
 				new Array({name:"Content-Type",value:"application/x-www-form-urlencoded"})
 			);
 		},
+
 		/**
 		 * This method performs a 'GET' request. It's a threaded request.
 		 * This is the default httprequest taken by a browser when it
@@ -170,8 +195,9 @@ var HTTPRequest = (function() {
 		 * @param {Object} target An object that is bound to this request. This is a convenience way to toss some extra info to your handler.
 		 */
 		doGet: function(url, target) {
-			this.doRequest(url, "GET", target, null);
+			return this.doRequest(url, "GET", target, null);
 		},
+
 		/**
 		 * This method performs a 'HEAD' request. It's a threaded request.
 		 * This is a very common request, used by browsers to check if
@@ -204,8 +230,9 @@ var HTTPRequest = (function() {
 		 * @param {Object} target An object that is bound to this request. This is a convenience way to toss some extra info to your handler.
 		 */
 		doHead: function(url, target) {
-			this.doRequest(url, "HEAD", target, null);
+			return this.doRequest(url, "HEAD", target, null);
 		},
+
 		/**
 		 * This method performs a request of your chosen type. It's a threaded request.
 		 * The most common type of request is "GET", the second-most common is "POST".
@@ -218,9 +245,10 @@ var HTTPRequest = (function() {
 		doRequest:function(url, request, target, content, customHeaders) {
 			if (this.httpRequest!=false) {
 				this.target = target;
-				this.sendRequest(request,url,true,content, customHeaders);
+				return this.sendRequest(request,url,true,content, customHeaders);
 			}
 		},
+
 		/**
 		 * This method returns XML. This is a non-threaded request, it is
 		 * not advisable to use this as it will freeze the user=interface
@@ -237,6 +265,7 @@ var HTTPRequest = (function() {
 				return this.httpRequest.responseXML;
 			}
 		},
+
 		/**
 		 * This method returns Text. This is a non-threaded request, it is
 		 * not advisable to use this as it will freeze the user=interface
@@ -253,6 +282,7 @@ var HTTPRequest = (function() {
 				return this.httpRequest.responseText;
 			}
 		},
+
 		/**
 		 * Add a status handler to this RequestHandler.
 		 * Use this method to enable the handler to
@@ -262,10 +292,12 @@ var HTTPRequest = (function() {
 		 * 
 		 * @param {int} requestStatus The number of the status you want to handle (0 is filesystem, 200 is success, 404 is file not found)
 		 * @param {function} handler A function taking the HttpRequestWrapper as a parameter.
+		 * @deprecated
 		 */
 		addHandler: function( requestStatus, handler ) {
-			this.handlers[requestStatus]=handler;
+			throw "No longer implemented, with support for Promise, please use .then( ... )";
 		}
+
 	}
 	
 	formHelpers = {
