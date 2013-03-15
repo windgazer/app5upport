@@ -10,11 +10,44 @@ window.a5s = typeof window.a5s == "undefined"? {}: window.a5s;
 var ClassTemplate = ( function( domain ) {
 
 	var uidI           = 0,
-	    queue          = {},
 	    templates      = {},
-		types          = {},
 		re             = /\${([^}]+)}/gi,
 	    tempTemplate   = "<article id=\"${id}\">Loading...</article>";
+
+	var loaders = {};
+
+	/**
+	 * Get the template path for a 'type' based on an equally named
+	 * script resource.
+	 * 
+	 * @argument {String} type
+	 * @return {String} url returns null of script is not found
+	 */
+	function getTemplatePath( type ) {
+
+        var scripts = document.getElementsByTagName("script"),
+            l = scripts.length,
+            i = l,
+            re = new RegExp("^(.*/)" + type + ".js\\b.*$", "i");
+
+        for ( i; i--; ) {
+
+            var s = scripts[i];
+            var url = s.src;
+            var m = url.match( re );
+
+            if ( m ) {
+
+                var templateUrl = m[1] + type + ".html";
+                return templateUrl;
+
+            }
+
+        }
+
+        return null;
+
+	};
 
 	helper = {
 
@@ -27,94 +60,84 @@ var ClassTemplate = ( function( domain ) {
 			 */
 			loadTemplate : function( type ) {
 
-				var scripts = document.getElementsByTagName("script"),
-					l = scripts.length,
-					i = l,
-					re = new RegExp("^(.*/)" + type + ".js\\b.*$", "i");
-				
-				for (i; i--; ) {
-		
-					var s = scripts[i];
-					var url = s.src;
-					var m = url.match( re );
-					
-					if ( m ) {
-		
-						var templateUrl = m[1] + type + ".html";
+			    var tmpl = this.getTemplate( type ),
+			        loader = loaders[ type ];
 
-						if ( typeof templates[ type ] === "undefined"
-							 && typeof queue[ templateUrl ] === "undefined" ) {
+			    if ( tmpl === null && typeof loader === "undefined" ) {
 
-							var that = this;
-							var request = new HTTPRequest( function( wrapper ) {
+    				loader = new RSVP.Promise();
+    				var url = getTemplatePath( type );
 
-								var txt = wrapper.httpRequest.responseText;
-								delete queue[ templateUrl ];
-								that.addTemplate( type, txt );
-								ce.fireEvent("template.finished", {type: type, template: txt});
+					var that = this;
+					var request = new HTTPRequest( false );
 
-							}, false );
+					that.trigger( "template.queued", {type: type, url: url} );
+					request.doGet( url ).then( function( e ) {
 
-							queue[ templateUrl ] = request;
-							ce.fireEvent( "template.queued", {type: type, url: templateUrl} );
-							request.doGet( templateUrl );
+					    //console.log( "HTTPRequest is finished :)", that, loader );
+                        var wrapper = e.request,
+                            txt = wrapper.httpRequest.responseText;
 
-						}
-		
-					}
-		
-				}
+                        that.addTemplate( type, txt );
+                        that.trigger("template.finished", {type: type, template: txt});
+                        loader.trigger("template.finished", {type: type, template: txt});
+                        loader.resolve( {type: type, template: txt} );
+                        delete loaders[ type ];
+
+                    } );
+
+    				loaders[ type ] = loader;
+
+			    }
+
+			    return loader;
 
 			},
 
 		    /**
-             * Render the score as content of the 'target' node.
+             * Render a template with 'values' into 'node'.
              * 
              */
-            renderTemplate : function( templateName, values, node, callback, queue ) {
+            renderTemplate : function( templateName, values, node, promise ) {
     
-                var t = ClassTemplate.getTemplate( templateName );
+                var t = ClassTemplate.getTemplate( templateName ),
+                    loader = loaders[ templateName ],
+                    promise = promise || new RSVP.Promise();
 
                 if ( t === null ) {
 
+                    if ( !loader ) {
+                        loader = this.loadTemplate( templateName );
+                    }
+
                     //Setup delayed rendering...
-                    if ( queue ) {
-    
-                        queue.push( {
-                            templateName:   templateName,
-                            values:         values,
-                            node:           node,
-                            callback:       callback
-                        } );
-                        
-                        // Setup handler to wait for template...
-                        var uid = ce.attachEvent( "template.finished", function( eventtype,
-                                template ) {
-                            if (template.type === templateName) {
-                                while (queue.length) {
-                                    var v = queue.shift( );
-                                    ClassTemplate.renderTemplate( v.templateName, v.values, v.node, v.callback );
-                                }
-                                ce.detachEvent( uid );
-                            }
-                        } );
-    
-                    }
-    
+                    // Setup handler to wait for template...
+                    loader.on( "template.finished", function( e ) {
+
+                        ClassTemplate.renderTemplate( templateName, values, node, promise );
+                        loader.resolve();
+
+                    } );
+
+                    //Set temporary template
                     t = tempTemplate;
-    
+
+                } else {
+
+                    promise.resolve( { node: node } );
+
                 }
+                
+
                 if ( node ) {
-    
+
                     node.innerHTML = ClassTemplate.fillTemplate( t, values );
-    
-                    if (t !== tempTemplate) {
-                        if ( callback ) callback();
-                    }
-    
+
                 } else
                     throw "No target-node specified!!!";
-    
+                
+                return promise;
+
             },
 
 			addTemplate : function( type, template ) {
@@ -122,13 +145,20 @@ var ClassTemplate = ( function( domain ) {
 				templates[ type ] = template;
 
 			},
-			
+
 			getTemplate : function( type ) {
 
 				return templates[ type ]?templates[ type ]:null;
 
 			},
-			
+
+			/**
+			 * Fill a template with the provided values. Values van be encoded into
+			 * template as ${value} markers.
+			 * 
+			 * @argument {String} template The type of the template as string
+			 * @argument {JSON} values A JSON object of the values to be used
+			 */
 			fillTemplate : function( template, values ) {
 
 				var o = "",
@@ -143,7 +173,7 @@ var ClassTemplate = ( function( domain ) {
 					preIndex = re.lastIndex;
 
 				}
-				
+
 				if ( o.length <= 0 ) {
 				    return template;
 				}
@@ -151,22 +181,11 @@ var ClassTemplate = ( function( domain ) {
 				o += RegExp.rightContext;
 
 				return o;
-			},
-			
-			addType: function( type, object ) {
-
-				types[ type ] = object;
-
-			},
-			
-			getType: function( type ) {
-
-				return types[ type ];
 
 			}
-			
+
 	};
-	
+
 	if ( window.unittesting ) {
 	    var cachedtemplates = null;
 
@@ -174,15 +193,16 @@ var ClassTemplate = ( function( domain ) {
 	        if ( cachedtemplates === null ) {
 	            cachedtemplates = templates;
 	        }
-	        
+
 	        templates = {};
-	        queue = {};
 
 	        for ( var k in cachedtemplates ) {
 	            templates[ k ] = cachedtemplate[ k ];
 	        }
 	    }
 	}
+
+	RSVP.EventTarget.mixin( helper );
 
 	return helper;
 
