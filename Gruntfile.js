@@ -9,13 +9,11 @@ module.exports = function(grunt) {
                 '<%= grunt.template.today("yyyy-mm-dd") %> */'
             },
             my_target: {
-                files: {
-                    '<%= pkg.build.target %>/ClassTemplate.min.js': ['ClassTemplate.js'],
-                    '<%= pkg.build.target %>/Events.min.js': ['Events.js'],
-                    '<%= pkg.build.target %>/FastButtonListener.min.js': ['FastButtonListener.js'],
-                    '<%= pkg.build.target %>/HTTPRequest.min.js': ['HTTPRequest.js'],
-                    '<%= pkg.build.target %>/Resolutions.min.js': ['Resolutions.js']
-                }
+                files: grunt.file.expandMapping( ['*.js','!Gruntfile.js'], '<%= pkg.build.target %>/', {
+                    rename: function(dest, matchedSrcPath, options) {
+                        return dest + matchedSrcPath.replace('.js','.min.js');
+                    }
+                })
             }
         },
         copy: {
