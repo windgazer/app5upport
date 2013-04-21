@@ -9,18 +9,23 @@ module.exports = function(grunt) {
                 '<%= grunt.template.today("yyyy-mm-dd") %> */'
             },
             my_target: {
-                files: grunt.file.expandMapping( ['*.js','!Gruntfile.js'], '<%= pkg.build.target %>/', {
-                    rename: function(dest, matchedSrcPath, options) {
-                        return dest + matchedSrcPath.replace('.js','.min.js');
-                    }
-                })
+                files: grunt.file.expandMapping( ['*.js','!Gruntfile.js'], '<%= pkg.build.target %>-minified/' )
             }
         },
         copy: {
-            main: {
-                files: [
-                        {expand: true, flatten: true, src: ['rsvp/browser/rsvp.min.js'], dest: '<%= pkg.build.target %>/'}
-                        ]
+            minify: {
+                files: grunt.file.expandMapping(
+                    ['rsvp/browser/rsvp.min.js','package.json']
+                    , '<%= pkg.build.target %>-minified/'
+                    , {
+                        flatten: Boolean,
+                        rename: function(dest, matchedSrcPath, options) {
+                        return dest + matchedSrcPath.replace('.min.js','.js');
+                    } }
+                )
+            },
+            normal: {
+                files: grunt.file.expandMapping( ['*.js','!Gruntfile.js','rsvp/browser/rsvp.js'], '<%= pkg.build.target %>-normal/', { flatten: Boolean } )
             }
         }
     });
@@ -30,6 +35,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Default task(s).
-    grunt.registerTask('default', ['uglify', 'copy']);
+    grunt.registerTask('default', ['uglify', 'copy:minify']);
+    grunt.registerTask('npm', ['copy:normal']);
 
 };
