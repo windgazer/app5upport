@@ -1,7 +1,21 @@
 (function(){
 
 	var	HELPER_ID = "WGD_Resolutions_Helper",
-		helper = null;
+		helper = null,
+		body = null
+        requestAnimationFrame = window.requestAnimationFrame ||
+                                mozRequestAnimationFrame ||
+                                webkitRequestAnimationFrame ||
+                                msRequestAnimationFrame ||
+                                oRequestAnimationFrame;
+
+	function getBody() {
+	    if (body === null) {
+	        body = document.getElementsByTagName("body")[0];
+	    }
+	    
+	    return body;
+	}
 
 	/**
 	 * Resolutions is a helper class that will attempt to auto-detect what type/size
@@ -62,12 +76,22 @@
 		 * The setup routine that calculates what screen-format we're at :)
 		 */
 		screenSetup:function() {
-			var self = this;
-
-			var size = Resolutions.getShortSize();
-			var fontSize = Math.round(size.min / 24); //24 is a magic number that appears to work well for no apparent reason :)
+			var self = this,
+			    size = Resolutions.getShortSize(),
+			    body = getBody(),
+			    fontSize = Math.round(size.min / 24); //24 is a magic number that appears to work well for no apparent reason :)
+			if (body.classList) { //Set body class `is-scaling` so that transitions / animations can be put on hold.
+			    body.classList.add('is-scaling');
+			}
 			Resolutions.setOrientation(size.landscape?"landscape":"portrait");
-			document.getElementsByTagName("body")[0].style.fontSize = fontSize + "px";
+			body.style.fontSize = fontSize + "px";
+            if (body.classList) {
+                //Remove classname on next available animation-frame
+                //This will ensure page reflow has completed.
+                requestAnimationFrame(function() {
+                    body.classList.remove('is-scaling');
+                });
+            }
 		},
 	
 		/**
