@@ -2,12 +2,12 @@
 
 	var	HELPER_ID = "WGD_Resolutions_Helper",
 		helper = null,
-		body = null
-        requestAnimationFrame = window.requestAnimationFrame ||
-                                mozRequestAnimationFrame ||
-                                webkitRequestAnimationFrame ||
-                                msRequestAnimationFrame ||
-                                oRequestAnimationFrame
+		body = null,
+        raf = window.requestAnimationFrame ||
+                                window.mozRequestAnimationFrame ||
+                                window.webkitRequestAnimationFrame ||
+                                window.msRequestAnimationFrame ||
+                                window.oRequestAnimationFrame
     ;
 
 	function getBody() {
@@ -92,9 +92,9 @@
             if (body.classList) {
                 //Remove classname on next available animation-frame
                 //This will ensure page reflow has completed.
-                requestAnimationFrame(function() {
+                raf?raf(function() {
                     body.classList.remove('is-scaling');
-                });
+                }):null;
             }
 		},
 	
