@@ -7,11 +7,12 @@
                                 mozRequestAnimationFrame ||
                                 webkitRequestAnimationFrame ||
                                 msRequestAnimationFrame ||
-                                oRequestAnimationFrame;
+                                oRequestAnimationFrame
+    ;
 
 	function getBody() {
 	    if (body === null) {
-	        body = document.getElementsByTagName("body")[0];
+	        body = document.body || document.getElementsByTagName("body")[0];
 	    }
 	    
 	    return body;
@@ -64,7 +65,7 @@
 				helper.style.left="0";
 				helper.style.visibility="hidden";
 		
-				var body = document.getElementsByTagName("body")[0];
+				var body = getBody();
 				body.appendChild(helper);
 			}
 
@@ -79,7 +80,10 @@
 			var self = this,
 			    size = Resolutions.getShortSize(),
 			    body = getBody(),
-			    fontSize = Math.round(size.min / 24); //24 is a magic number that appears to work well for no apparent reason :)
+                //24 is a magic number that appears to work well for
+                // no apparent reason :)
+			    fontSize = Math.round(size.min / 24)
+            ; 
 			if (body.classList) { //Set body class `is-scaling` so that transitions / animations can be put on hold.
 			    body.classList.add('is-scaling');
 			}
@@ -98,14 +102,17 @@
 		 * Gets the shortest side of the screen
 		 */	
 		getShortSize:function() {
-			var width = screen.width;
-			var height = screen.height;
+			var width = screen.width,
+                height = screen.height,
+                body = getBody()
+            ;
+            
 			if (width==240||width==320||width==360||width==640) {
 				//Skipping width/height guesstimations for some known presets.
 				//Guesstimation fails on most mobile devices unfortunately.
 			} else {
-				width = helper.clientWidth||document.body.innerWidth;
-				height = helper.clientHeight||document.body.innerHeight;
+				width = helper.clientWidth||body.innerWidth;
+				height = helper.clientHeight||body.innerHeight;
 			}
 			var min = Math.min(width,height);
 			return {min:min,landscape:min!=width};
@@ -116,7 +123,8 @@
 		 * class-name on the body.
 		 */
 		setOrientation:function(orientation) {
-			var body = document.getElementsByTagName("body")[0];
+			var body = getBody();
+
 			body.className = body.className.replace(/ ?orientation_[^ ]+/,"") + " orientation_" + orientation;
 		}
 	
