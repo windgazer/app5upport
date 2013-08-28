@@ -1,7 +1,22 @@
 (function(){
 
 	var	HELPER_ID = "WGD_Resolutions_Helper",
-		helper = null;
+		helper = null,
+		body = null
+        requestAnimationFrame = window.requestAnimationFrame ||
+                                mozRequestAnimationFrame ||
+                                webkitRequestAnimationFrame ||
+                                msRequestAnimationFrame ||
+                                oRequestAnimationFrame
+    ;
+
+	function getBody() {
+	    if (body === null) {
+	        body = document.body || document.getElementsByTagName("body")[0];
+	    }
+	    
+	    return body;
+	}
 
 	/**
 	 * Resolutions is a helper class that will attempt to auto-detect what type/size
@@ -50,7 +65,7 @@
 				helper.style.left="0";
 				helper.style.visibility="hidden";
 		
-				var body = document.getElementsByTagName("body")[0];
+				var body = getBody();
 				body.appendChild(helper);
 			}
 
@@ -62,26 +77,42 @@
 		 * The setup routine that calculates what screen-format we're at :)
 		 */
 		screenSetup:function() {
-			var self = this;
-
-			var size = Resolutions.getShortSize();
-			var fontSize = Math.round(size.min / 24); //24 is a magic number that appears to work well for no apparent reason :)
+			var self = this,
+			    size = Resolutions.getShortSize(),
+			    body = getBody(),
+                //24 is a magic number that appears to work well for
+                // no apparent reason :)
+			    fontSize = Math.round(size.min / 24)
+            ; 
+			if (body.classList) { //Set body class `is-scaling` so that transitions / animations can be put on hold.
+			    body.classList.add('is-scaling');
+			}
 			Resolutions.setOrientation(size.landscape?"landscape":"portrait");
-			document.getElementsByTagName("body")[0].style.fontSize = fontSize + "px";
+			body.style.fontSize = fontSize + "px";
+            if (body.classList) {
+                //Remove classname on next available animation-frame
+                //This will ensure page reflow has completed.
+                requestAnimationFrame(function() {
+                    body.classList.remove('is-scaling');
+                });
+            }
 		},
 	
 		/**
 		 * Gets the shortest side of the screen
 		 */	
 		getShortSize:function() {
-			var width = screen.width;
-			var height = screen.height;
+			var width = screen.width,
+                height = screen.height,
+                body = getBody()
+            ;
+            
 			if (width==240||width==320||width==360||width==640) {
 				//Skipping width/height guesstimations for some known presets.
 				//Guesstimation fails on most mobile devices unfortunately.
 			} else {
-				width = helper.clientWidth||document.body.innerWidth;
-				height = helper.clientHeight||document.body.innerHeight;
+				width = helper.clientWidth||body.innerWidth;
+				height = helper.clientHeight||body.innerHeight;
 			}
 			var min = Math.min(width,height);
 			return {min:min,landscape:min!=width};
@@ -92,7 +123,8 @@
 		 * class-name on the body.
 		 */
 		setOrientation:function(orientation) {
-			var body = document.getElementsByTagName("body")[0];
+			var body = getBody();
+
 			body.className = body.className.replace(/ ?orientation_[^ ]+/,"") + " orientation_" + orientation;
 		}
 	
