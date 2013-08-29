@@ -3,12 +3,14 @@
 	var	HELPER_ID = "WGD_Resolutions_Helper",
 		helper = null,
 		body = null,
-        raf = window.requestAnimationFrame ||
-                                window.mozRequestAnimationFrame ||
-                                window.webkitRequestAnimationFrame ||
-                                window.msRequestAnimationFrame ||
-                                window.oRequestAnimationFrame
+		vendors = ['ms', 'moz', 'webkit', 'o']
     ;
+
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
 
 	function getBody() {
 	    if (body === null) {
@@ -92,9 +94,10 @@
             if (body.classList) {
                 //Remove classname on next available animation-frame
                 //This will ensure page reflow has completed.
-                raf?raf(function() {
+                requestAnimationFrame(function() {
                     body.classList.remove('is-scaling');
-                }):null;
+                    console.log('rescaling finished');
+                });
             }
 		},
 	
