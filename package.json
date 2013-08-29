@@ -1,7 +1,7 @@
 {
   "name": "app5upport",
   "author": "Martin 'Windgazer' Reurings <martin@windgazer.nl>",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
   "dependencies": {},
   "devDependencies": {
