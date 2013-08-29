@@ -87,7 +87,6 @@
             ; 
             if (body.classList) { //Set body class `is-scaling` so that transitions / animations can be put on hold.
                 body.classList.add('is-scaling');
-                console.log('rescaling');
             }
             Resolutions.setOrientation(size.landscape?"landscape":"portrait");
             body.style.fontSize = fontSize + "px";
@@ -96,7 +95,6 @@
                 //This will ensure page reflow has completed.
                 requestAnimationFrame(function() {
                     body.classList.remove('is-scaling');
-                    console.log('rescaling finished');
                 });
             }
         },
