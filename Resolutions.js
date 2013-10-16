@@ -109,9 +109,10 @@
                 min
             ;
 
-            if (width==240||width==320||width==360||width==640) {
+            if (!('ontouchstart' in window) && (width==240||width==320||width==360||width==640)) {
                 //Skipping width/height guesstimations for some known presets.
                 //Guesstimation fails on most mobile devices unfortunately.
+                //Added ontouchstart check because iOS fakes screen-res values.
             } else {
                 width = helper.clientWidth||body.innerWidth;
                 height = helper.clientHeight||body.innerHeight;
