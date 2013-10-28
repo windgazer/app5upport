@@ -1,5 +1,7 @@
 module.exports = function(grunt) {
 
+    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -15,7 +17,7 @@ module.exports = function(grunt) {
         copy: {
             minify: {
                 files: grunt.file.expandMapping(
-                    ['rsvp/browser/rsvp.min.js','package.json']
+                    ['libs/rsvp/browser/rsvp.min.js','package.json']
                     , '<%= pkg.build.target %>-minified/'
                     , {
                         flatten: Boolean,
@@ -25,14 +27,10 @@ module.exports = function(grunt) {
                 )
             },
             normal: {
-                files: grunt.file.expandMapping( ['*.js','!Gruntfile.js','rsvp/browser/rsvp.js'], '<%= pkg.build.target %>-normal/', { flatten: Boolean } )
+                files: grunt.file.expandMapping( ['*.js','!Gruntfile.js','libs/rsvp/browser/rsvp.js'], '<%= pkg.build.target %>-normal/', { flatten: Boolean } )
             }
         }
     });
-
-    // Load the plugin that provides the "uglify" task.
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Default task(s).
     grunt.registerTask('default', ['uglify', 'copy:minify']);
