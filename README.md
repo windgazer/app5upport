@@ -1,7 +1,7 @@
 app5upport
 ==========
 
-[![Build Status](https://travis-ci.org/windgazer/app5upport.png?branch=master)](https://travis-ci.org/windgazer/app5upport)
+[![Build Status](https://travis-ci.org/windgazer/app5upport.png?branch=master)](https://travis-ci.org/windgazer/app5upport) [![Stories in Ready](https://badge.waffle.io/windgazer/app5upport.png?label=ready)](http://waffle.io/windgazer/app5upport)
 
 HTML5 App Support, useful JS scripts to smoothen app creation.
 
