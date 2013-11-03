@@ -88,12 +88,12 @@
                 fontSize = Math.round(size.min / 24)
             ;
             //Set body class `is-scaling` so that transitions / animations can be put on hold.
-            if (body.classList) { 
+            if (body.classList && requestAnimationFrame) { 
                 body.classList.add("is-scaling");
             }
             Resolutions.setOrientation(size.landscape?"landscape":"portrait");
             body.style.fontSize = fontSize + "px";
-            if (body.classList) {
+            if (body.classList && requestAnimationFrame) {
                 //Remove classname on next available animation-frame
                 //This will ensure page reflow has completed.
                 requestAnimationFrame(function() {
