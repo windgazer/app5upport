@@ -16,7 +16,7 @@
     ],
     "src_files": [
         "test/ut.js",
-        "rsvp/browser/rsvp.js",
+        "libs/rsvp/browser/rsvp.js",
         "Events.js",
         "HTTPRequest.js",
         "Resolutions.js",

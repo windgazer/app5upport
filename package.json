@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
+  	"bower":"",
     "jasmine-node": "",
     "testem": "",
     "csslint": "",
@@ -18,6 +19,7 @@
   },
   "engine": "node 0.8",
   "scripts": {
+  	"install": "bower install",
     "test": "testem ci -T 10"
   },
   "build": {
