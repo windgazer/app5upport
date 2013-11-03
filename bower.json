@@ -1,0 +1,8 @@
+{
+  "name": "App5Support",
+  "version": "0.0.9",
+  "main": "index.html",
+  "dependencies": {
+    "rsvp": "https://github.com/tildeio/rsvp.js.git#1.2.0"
+  }
+}
