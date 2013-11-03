@@ -1,0 +1,11 @@
+{
+    "camelcase":true,
+    "curly":true,
+    "indent":4,
+    "quotmark":"double",
+    "strict":true,
+    "maxcomplexity":7,
+    "maxlen":96,
+    "undef":true,
+    "browser": true
+}

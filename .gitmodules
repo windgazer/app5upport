@@ -1,3 +1,0 @@
-[submodule "rsvp"]
-	path = rsvp
-	url = git://github.com/tildeio/rsvp.js.git 

@@ -5,15 +5,21 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
+  	"bower":"",
     "jasmine-node": "",
     "testem": "",
     "csslint": "",
+    "matchdep": "~0.1.2",
+    "semver": "~2.1.0",
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-clean": "~0.4.1",
     "grunt-contrib-copy": "~0.4.1"
   },
   "engine": "node 0.8",
   "scripts": {
+  	"install": "bower install",
     "test": "testem ci -T 10"
   },
   "build": {

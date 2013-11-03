@@ -16,8 +16,12 @@
     ],
     "src_files": [
         "test/ut.js",
-        "rsvp/browser/rsvp.js",
-        "*.js",
+        "libs/rsvp/browser/rsvp.js",
+        "Events.js",
+        "HTTPRequest.js",
+        "Resolutions.js",
+        "ClassTemplate.js",
+        "FastButtonListener.js",
         "test/specs/**/*.js"
     ],
     "watch_files": [
