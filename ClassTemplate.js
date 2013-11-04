@@ -191,7 +191,7 @@ var ClassTemplate = ( function( domain ) {
 
             var o = "", m = null, preIndex = 0;
 
-            while ( m = re.exec( template ) ) {
+            while ( m = re.exec( template ) ) { // jshint ignore:line
 
                 var v = values[m[1]];
                 v = typeof v !== "undefined" ? v : m[1];

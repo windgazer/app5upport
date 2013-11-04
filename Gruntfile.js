@@ -12,7 +12,7 @@ module.exports = function( grunt ) {
                 banner : "/*! <%= pkg.name %> - v<%= pkg.version %> - " +
                          "<%= grunt.template.today('yyyy-mm-dd') %> */"
             },
-            my_target : {
+            my_target : { // jshint ignore:line
                 files : grunt.file.expandMapping( [ "*.js", "!Gruntfile.js" ],
                         "<%= pkg.build.target %>-minified/" )
             }
