@@ -18,11 +18,13 @@
     "src_files": [
         "test/ut.js",
         "libs/rsvp/browser/rsvp.js",
+        "libs/points/points.js",
         "Events.js",
         "HTTPRequest.js",
         "Resolutions.js",
         "ClassTemplate.js",
         "FastButtonListener.js",
+        "Interactions.js",
         "test/specs/**/*.js"
     ],
     "watch_files": [
