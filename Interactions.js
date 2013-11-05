@@ -117,6 +117,7 @@
         swipeDown.start( e );
         addListener( EVENTS.MOVE, trackGestures );
         addListener( EVENTS.UP, stopTrackingGestures );
+        e.preventDefault();
     }
 
     function init() {
