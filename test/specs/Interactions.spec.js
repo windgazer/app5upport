@@ -162,9 +162,9 @@ describe( "Interactions", function( ) {
             
         } );
 
-        it( "doesn't trigger on down swipe below 50 pixels from top", function( ) {
+        it( "doesn't trigger on down swipe below 15 pixels from top", function( ) {
 
-            down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:10,clientY:51 } );
+            down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:10,clientY:16 } );
             m1 = eventHacks.getBasicEvent( "pointermove", false, { clientX:10,clientY:60 } );
             m2 = eventHacks.getBasicEvent( "pointermove", false, { clientX:10,clientY:70 } );
             m3 = eventHacks.getBasicEvent( "pointermove", false, { clientX:10,clientY:80 } );

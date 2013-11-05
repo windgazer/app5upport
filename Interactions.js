@@ -32,12 +32,12 @@
         }()),
         swipeDown = ( function( ) {
             var valid = true,
-                start, current, end
+                start
             ;
 
             return {
                 start: function( e ) {
-                    valid = e.clientY < 51;
+                    valid = e.clientY < 16;
                     start = e;
                     return valid;
                 },
@@ -48,11 +48,11 @@
                     return valid;
                 },
                 isTriggered: function( e ) {
+                    var h, w;
                     if (valid) {
-                        var h = e.clientY - start.clientY,
-                            w = Math.abs( e.clientX - start.clientX )
-                        ;
-
+                        h = e.clientY - start.clientY;
+                        w = Math.abs( e.clientX - start.clientX );
+                        
                         valid = h > 35 && (w === 0 || h/w > 2);
                     }
                     return valid;
