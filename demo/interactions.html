@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title data-i18n="dialog.gameOver.desc">PointerEvents Testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="no" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="apple-touch-icon-precomposed" href="assets/icon.png" />
+    <link rel="shortcut icon" href="icon.png" />
+
+    <!-- build:js js/libs.js -->
+    <script src="../libs/points/points.min.js"></script>
+    <!-- endbuild -->
+    <script src="../Interactions.js"></script>
+
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow: hidden;
+			-ms-touch-action: none;
+			touch-action: none;
+		}
+		
+		body {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+		
+		body::before, body::after {
+			content: "\00a0"; /* No-break space character */
+			display: block;
+			overflow: hidden;
+			height: 0;
+		}
+		
+		.drawerTopRevealed .topdrawer {
+			margin-top: 0;
+
+			-webkit-transition: margin 0.5s ease-in 0;
+			transition: margin 0.5s ease-in 0;
+		}
+		
+		.topdrawer {
+			background: #8ADA55;
+			box-shadow: inset 0 -0.25em 0.25em rgba( 32,32,32 ,0.5 );
+			height: 3.5em;
+			margin-top: -3.5em;
+
+			-webkit-transition: margin 0.25s ease-out 0;
+			transition: margin 0.25s ease-out 0;
+		}
+		.topdrawer > menu {
+			margin: 0;
+			padding: 0.25em 1em 0.5em;
+		}
+	</style>
+
+</head>
+<body>
+
+	<aside class="topdrawer"><menu>
+		<li>Option 1</li>
+		<li>Option 2</li>
+	</menu></aside>
+    <main>
+    	<p>This is the testing area :)</p>
+   	</main>
+
+</body>
+</html>
