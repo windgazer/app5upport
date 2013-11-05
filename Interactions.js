@@ -68,7 +68,13 @@
 
             return {
                 start: function( e1 ) {
-                    var y = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop,
+                    var y = (window.pageYOffset !== undefined) ?
+                            window.pageYOffset :
+                            (
+                                document.documentElement ||
+                                document.body.parentNode ||
+                                document.body
+                            ).scrollTop,
                         e = e1.params||e1
                     ;
 
@@ -95,7 +101,6 @@
                         wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
                         valid = wheelData > 0;
                         if (wheelData > 20) {
-                            console.log( wheelData );
                             addClass( "drawerTopRevealed" );
                         }
                     }
