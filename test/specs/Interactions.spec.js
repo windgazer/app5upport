@@ -83,7 +83,7 @@ describe( "Interactions", function( ) {
                     writable: false
                 });
                 
-                pointerEvent.target = {};
+                pointerEvent.params = params;
 
                 return pointerEvent;
             }
@@ -200,6 +200,17 @@ describe( "Interactions", function( ) {
             //Actual test and such is running in AfterEach
             test = function() {
                 expect( getBody( ).classList.contains("drawerTopRevealed") ).toBe( false );
+            };
+
+        } );
+        
+        it( "trigger drawer top when scrolling down beyond the top", function( ) {
+
+            up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            
+            //Actual test and such is running in AfterEach
+            test = function() {
+                expect( getBody( ).classList.contains("drawerTopRevealed") ).toBe( true );
             };
 
         } );

@@ -59,6 +59,60 @@
                 }
             };
         }( ) ),
+        scrollUp = ( function( ) {
+            var valid = true,
+                isVertical,
+                isTracking,
+                start
+            ;
+
+            return {
+                start: function( e1 ) {
+                    var y = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop,
+                        e = e1.params||e1
+                    ;
+
+                    //Some hackeridoo to figure this out between WebKit / Mozilla
+                    if ( typeof e.axis === "undefined" ) {
+                        isVertical = Math.abs( e.wheelDeltaY ) > Math.abs( e.wheelDeltaX );
+                    } else {
+                        isVertical = e.axis > 1;
+                    }
+
+                    valid = y <= 0 && isVertical;
+
+                    start = e;
+                    return valid;
+                },
+                track: function( e1 ) {
+                    var wheelData,
+                        e = e1.params||e1
+                    ;
+                    if (!isTracking) {
+                        this.start( e );
+                    }
+                    if (valid) {
+                        wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
+                        valid = wheelData > 0;
+                        if (wheelData > 20) {
+                            console.log( wheelData );
+                            addClass( "drawerTopRevealed" );
+                        }
+                    }
+                    return valid;
+                },
+                isTriggered: function( e ) {
+                    var h, w;
+                    if (valid) {
+                        h = e.clientY - start.clientY;
+                        w = Math.abs( e.clientX - start.clientX );
+                        
+                        valid = h > 35 && (w === 0 || h/w > 2);
+                    }
+                    return valid;
+                }
+            };
+        }( ) ),
         classes = []
     ;
     
@@ -120,8 +174,14 @@
         e.preventDefault();
     }
 
+    function trackScrollGestures( e ) {
+        scrollUp.track( e );
+    }
+
     function init() {
         addListener( EVENTS.DOWN, startTrackingGestures );
+        window.addEventListener( "mousewheel", trackScrollGestures );
+        window.addEventListener( "DOMMouseScroll", trackScrollGestures );
     }
 
     window.addEventListener( "load", init );
