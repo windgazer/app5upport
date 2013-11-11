@@ -63,8 +63,18 @@
             var valid = true,
                 isVertical,
                 isTracking,
-                start
+                start,
+                i
             ;
+            
+            function reset() {
+                if (i-- > 0) {
+                    requestAnimationFrame(reset);
+                } else {
+                    console.log('finished tracking');
+                    isTracking = false;
+                }
+            }
 
             return {
                 start: function( e1 ) {
@@ -88,6 +98,9 @@
                     valid = y <= 0 && isVertical;
 
                     start = e;
+                    i = 2;
+                    isTracking = true;
+                    console.log("starting", valid);
                     return valid;
                 },
                 track: function( e1 ) {
@@ -96,12 +109,18 @@
                     ;
                     if (!isTracking) {
                         this.start( e );
-                    }
-                    if (valid) {
-                        wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
-                        valid = wheelData > 0;
-                        if (wheelData > 20) {
-                            addClass( "drawerTopRevealed" );
+                        reset();
+                    } else {
+                        console.log("Verifying", valid, i);
+                        //Check for max tresh-hold (so as not to create too long of a buffer)
+                        //Add and check against 0 (to make sure there is a buffer)
+                        //Check if still valid (so as not to waste time calculating useless info)
+                        if ( i < 4 && (i = i + 2) > 0 && valid ) {
+                            wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
+                            valid = valid && wheelData > 0;
+                            if ( i > 2 && valid ) {
+                                addClass( "drawerTopRevealed" );
+                            }
                         }
                     }
                     return valid;
@@ -176,7 +195,6 @@
         swipeDown.start( e );
         addListener( EVENTS.MOVE, trackGestures );
         addListener( EVENTS.UP, stopTrackingGestures );
-        e.preventDefault();
     }
 
     function trackScrollGestures( e ) {

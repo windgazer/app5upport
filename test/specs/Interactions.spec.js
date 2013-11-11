@@ -104,8 +104,9 @@ describe( "Interactions", function( ) {
                 }
             }()),
             down, m1, m2, m3, up,
+            overdrive = 1,
             cycle = function() {
-                switch ( ++i ) {
+                switch ( (++i * overdrive) ) {
                 case 5:
                     getBody().dispatchEvent( down );
                     break;
@@ -149,6 +150,7 @@ describe( "Interactions", function( ) {
 
         it( "trigger on top-edge and down swipe", function( ) {
 
+            overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:10,clientY:1 } );
             m1 = eventHacks.getBasicEvent( "pointermove", false, { clientX:10,clientY:10 } );
             m2 = eventHacks.getBasicEvent( "pointermove", false, { clientX:10,clientY:20 } );
@@ -164,6 +166,7 @@ describe( "Interactions", function( ) {
 
         it( "doesn't trigger on down swipe below 15 pixels from top", function( ) {
 
+            overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:10,clientY:16 } );
             m1 = eventHacks.getBasicEvent( "pointermove", false, { clientX:10,clientY:60 } );
             m2 = eventHacks.getBasicEvent( "pointermove", false, { clientX:10,clientY:70 } );
@@ -179,6 +182,7 @@ describe( "Interactions", function( ) {
 
         it( "doesn't trigger on down swipe with angle of 35degrees or more", function( ) {
 
+            overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:10,clientY:0 } );
             up = eventHacks.getBasicEvent( "pointerup", false, { clientX:56,clientY:90 } );
 
@@ -191,6 +195,7 @@ describe( "Interactions", function( ) {
 
         it( "clears drawerTopRevealed when any pointerdown event occurs", function( ) {
             
+            overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:50,clientY:0 } );
             m1 = eventHacks.getBasicEvent( "pointermove", false, { clientX:50,clientY:70 } );
             m2 = eventHacks.getBasicEvent( "pointerup", false, { clientX:50,clientY:90 } );
@@ -206,6 +211,25 @@ describe( "Interactions", function( ) {
         
         it( "trigger drawer top when scrolling down beyond the top", function( ) {
 
+            overdrive = 5;
+            m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            
+            //Actual test and such is running in AfterEach
+            test = function() {
+                expect( getBody( ).classList.contains("drawerTopRevealed") ).toBe( true );
+            };
+
+        } );
+        
+        it( "trigger drawer top when scrolling down beyond the top, 2nd time", function( ) {
+
+            overdrive = 5;
+            m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
             up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
             
             //Actual test and such is running in AfterEach
