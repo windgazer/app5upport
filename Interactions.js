@@ -1,3 +1,4 @@
+/* global requestAnimationFrame */
 /**
  * Interactions is a module that will watch for pointer-events and on certain
  * well-known 'gestures' is will trigger some classes on the document body.
@@ -71,7 +72,6 @@
                 if (i-- > 0) {
                     requestAnimationFrame(reset);
                 } else {
-                    console.log('finished tracking');
                     isTracking = false;
                 }
             }
@@ -100,7 +100,6 @@
                     start = e;
                     i = 2;
                     isTracking = true;
-                    console.log("starting", valid);
                     return valid;
                 },
                 track: function( e1 ) {
@@ -111,10 +110,12 @@
                         this.start( e );
                         reset();
                     } else {
-                        console.log("Verifying", valid, i);
-                        //Check for max tresh-hold (so as not to create too long of a buffer)
-                        //Add and check against 0 (to make sure there is a buffer)
-                        //Check if still valid (so as not to waste time calculating useless info)
+                        // Check for max tresh-hold (so as not to create too
+                        // long of a buffer)
+                        // Add and check against 0 (to make sure there is a
+                        // buffer)
+                        // Check if still valid (so as not to waste time
+                        // calculating useless info)
                         if ( i < 4 && (i = i + 2) > 0 && valid ) {
                             wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
                             valid = valid && wheelData > 0;
