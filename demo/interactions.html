@@ -48,7 +48,13 @@
 			-webkit-transition: margin 0.5s ease-in 0;
 			transition: margin 0.5s ease-in 0;
 		}
-		
+		.drawerLeftRevealed .leftdrawer {
+			margin-left: 0;
+
+			-webkit-transition: margin 0.5s ease-in 0;
+			transition: margin 0.5s ease-in 0;
+		}
+
 		.topdrawer {
 			background: #8ADA55;
 			box-shadow: inset 0 -0.25em 0.25em rgba( 32,32,32 ,0.5 );
@@ -58,7 +64,18 @@
 			-webkit-transition: margin 0.25s ease-out 0;
 			transition: margin 0.25s ease-out 0;
 		}
-		.topdrawer > menu {
+		.leftdrawer {
+			float: left;
+			height: 100%;
+			background: #8ADA55;
+			box-shadow: inset -0.25em 0 0.25em rgba( 32,32,32 ,0.5 );
+			width: 10em;
+			margin-left: -10em;
+
+			-webkit-transition: margin 0.25s ease-out 0;
+			transition: margin 0.25s ease-out 0;
+		}
+		.drawer > menu {
 			margin: 0;
 			padding: 0.25em 1em 0.5em;
 		}
@@ -67,9 +84,13 @@
 </head>
 <body>
 
-	<aside class="topdrawer"><menu>
+	<aside class="topdrawer drawer"><menu>
 		<li>Option 1</li>
 		<li>Option 2</li>
+	</menu></aside>
+	<aside class="leftdrawer drawer"><menu>
+		<li>Nav 1</li>
+		<li>Nav 2</li>
 	</menu></aside>
     <main>
     	<p>This is the testing area :)</p>

@@ -1,4 +1,4 @@
-/* global requestAnimationFrame */
+/* global requestAnimationFrame, RSVP */
 /**
  * Interactions is a module that will watch for pointer-events and on certain
  * well-known 'gestures' is will trigger some classes on the document body.
@@ -12,14 +12,18 @@
  * requirement as browsers implement a viable support.
  * 
  * @depends points.js
+ * @depends RSVP.js
  */
-( function( ) {
+var Interactions = ( function( ) {
     "use strict";
 
     var EVENTS = {
             DOWN: "PointerDown",
             UP: "PointerUp",
             MOVE: "PointerMove"
+        },
+        Interactions = {
+            
         },
         getBody = ( function() {
             var b = null;
@@ -120,7 +124,89 @@
                             wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
                             valid = valid && wheelData > 0;
                             if ( i > 2 && valid ) {
-                                addClass( "drawerTopRevealed" );
+                                if ( !addClass( "drawerTopRevealed" ) ) {
+                                    Interactions.trigger( "drawertop" );
+                                }
+                            }
+                        }
+                    }
+                    return valid;
+                },
+                isTriggered: function( e ) {
+                    var h, w;
+                    if (valid) {
+                        h = e.clientY - start.clientY;
+                        w = Math.abs( e.clientX - start.clientX );
+                        
+                        valid = h > 35 && (w === 0 || h/w > 2);
+                    }
+                    return valid;
+                }
+            };
+        }( ) ),
+        scrollLeft = ( function( ) {
+            var valid = true,
+                isVertical,
+                isTracking,
+                start,
+                i
+            ;
+            
+            function reset() {
+                if (i-- > 0) {
+                    requestAnimationFrame(reset);
+                } else {
+                    isTracking = false;
+                }
+            }
+
+            return {
+                start: function( e1 ) {
+                    var x = (window.pageXOffset !== undefined) ?
+                            window.pageXOffset :
+                            (
+                                document.documentElement ||
+                                document.body.parentNode ||
+                                document.body
+                            ).scrollLeft,
+                        e = e1.params||e1
+                    ;
+
+                    //Some hackeridoo to figure this out between WebKit / Mozilla
+                    if ( typeof e.axis === "undefined" ) {
+                        isVertical = Math.abs( e.wheelDeltaY ) > Math.abs( e.wheelDeltaX );
+                    } else {
+                        isVertical = e.axis > 1;
+                    }
+
+                    valid = x <= 0 && !isVertical;
+
+                    start = e;
+                    i = 2;
+                    isTracking = true;
+                    return valid;
+                },
+                track: function( e1 ) {
+                    var wheelData,
+                        e = e1.params||e1
+                    ;
+                    if (!isTracking) {
+                        this.start( e );
+                        reset();
+                    } else {
+                        // Check for max tresh-hold (so as not to create too
+                        // long of a buffer)
+                        // Add and check against 0 (to make sure there is a
+                        // buffer)
+                        // Check if still valid (so as not to waste time
+                        // calculating useless info)
+                        if ( i < 4 && (i = i + 2) > 0 && valid ) {
+                            wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
+                            valid = valid && wheelData > 0;
+                            if ( i > 2 && valid ) {
+                                if (!addClass( "drawerLeftRevealed" )) {
+                                    Interactions.trigger( "drawerleft" );
+                                }
                             }
                         }
                     }
@@ -140,6 +226,8 @@
         }( ) ),
         classes = []
     ;
+    
+    RSVP.EventTarget.mixin( Interactions );
     
     function genericListenerMethod( type, method, add ) {
         var b = getBody(),
@@ -163,8 +251,14 @@
     }
     
     function addClass( cls ) {
-        getBody( ).classList.add( cls );
+        var b = getBody();
+        if ( b.classList.contains( cls ) ) {
+            return false;
+        }
+        clearClasses();
+        b.classList.add( cls );
         classes.push( cls );
+        return true;
     }
     
     function clearClasses() {
@@ -184,6 +278,7 @@
     function stopTrackingGestures( e ) {
         if (swipeDown.isTriggered( e )) {
             addClass( "drawerTopRevealed" );
+            Interactions.trigger( "drawertop" );
         }
         removeListener( EVENTS.MOVE, trackGestures );
         removeListener( EVENTS.UP, stopTrackingGestures );
@@ -200,14 +295,22 @@
 
     function trackScrollGestures( e ) {
         scrollUp.track( e );
+        scrollLeft.track( e );
     }
 
     function init() {
         addListener( EVENTS.DOWN, startTrackingGestures );
+        //cancel mouse-wheel, can't do unit-test for it.
+        window.addEventListener( "mousewheel", function( e ) {
+            e.preventDefault();
+            return false;
+        } );
         window.addEventListener( "mousewheel", trackScrollGestures );
         window.addEventListener( "DOMMouseScroll", trackScrollGestures );
     }
 
     window.addEventListener( "load", init );
+
+    return Interactions;
 
 }( ) );

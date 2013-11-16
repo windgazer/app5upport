@@ -91,7 +91,7 @@ describe( "Interactions", function( ) {
         
     }() );
 
-    describe( "top-drawer", function( ) {
+    describe( "drawers", function( ) {
 
         var getBody = ( function() {
                 var b = null;
@@ -149,6 +149,13 @@ describe( "Interactions", function( ) {
         } );
 
         it( "trigger on top-edge and down swipe", function( ) {
+            
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                }
+            ;
+            Interactions.on( 'drawertop', fireEvent );
 
             overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:10,clientY:1 } );
@@ -160,11 +167,19 @@ describe( "Interactions", function( ) {
             //Actual test and such is running in AfterEach
             test = function() {
                 expect( getBody( ).classList.contains("drawerTopRevealed") ).toBe( true );
+                expect( fired ).toBe( true );
             };
             
         } );
 
         it( "doesn't trigger on down swipe below 15 pixels from top", function( ) {
+            
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                }
+            ;
+            Interactions.on( 'drawertop', fireEvent );
 
             overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:10,clientY:16 } );
@@ -176,6 +191,7 @@ describe( "Interactions", function( ) {
             //Actual test and such is running in AfterEach
             test = function() {
                 expect( getBody( ).classList.contains("drawerTopRevealed") ).toBe( false );
+                expect( fired ).toBe( false );
             };
 
         } );
@@ -209,7 +225,30 @@ describe( "Interactions", function( ) {
 
         } );
         
-        it( "trigger drawer top when scrolling down beyond the top", function( ) {
+        it( "triggers top when scrolling down beyond the top", function( ) {
+            
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                }
+            ;
+            Interactions.on( 'drawertop', fireEvent );
+
+            overdrive = 5;
+            m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            
+            //Actual test and such is running in AfterEach
+            test = function() {
+                expect( getBody( ).classList.contains("drawerTopRevealed") ).toBe( true );
+                expect( fired ).toBe( true );
+            };
+
+        } );
+        
+        it( "triggers top when scrolling down beyond the top, 2nd time", function( ) {
 
             overdrive = 5;
             m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
@@ -224,17 +263,25 @@ describe( "Interactions", function( ) {
 
         } );
         
-        it( "trigger drawer top when scrolling down beyond the top, 2nd time", function( ) {
+        it( "triggers left when scrolling left beyond the side", function( ) {
+            
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                }
+            ;
+            Interactions.on( 'drawerleft', fireEvent );
 
             overdrive = 5;
-            m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
-            m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
-            m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
-            up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: -150 } );
+            m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
+            m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
+            m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
+            up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
             
             //Actual test and such is running in AfterEach
             test = function() {
-                expect( getBody( ).classList.contains("drawerTopRevealed") ).toBe( true );
+                expect( getBody( ).classList.contains("drawerLeftRevealed") ).toBe( true );
+                expect( fired ).toBe( true );
             };
 
         } );
