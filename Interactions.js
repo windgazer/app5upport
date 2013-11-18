@@ -66,9 +66,10 @@ var Interactions = ( function( ) {
         }( ) ),
         scrollUp = ( function( ) {
             var valid = true,
-                isVertical,
                 isTracking,
                 start,
+                startY,
+                isVert,
                 i
             ;
             
@@ -77,6 +78,51 @@ var Interactions = ( function( ) {
                     requestAnimationFrame(reset);
                 } else {
                     isTracking = false;
+                }
+            }
+            
+            function isVertical( e ) {
+                var vertical = true;
+                //Some hackeridoo to figure this out between WebKit / Mozilla
+                if ( typeof e.axis === "undefined" ) {
+                    vertical = Math.abs( e.wheelDeltaY ) > Math.abs( e.wheelDeltaX );
+                } else {
+                    vertical = e.axis > 1;
+                }
+                return vertical;
+            }
+            
+            function setClass( up ) {
+                if ( up && !addClass( "drawerTopRevealed" ) ) {
+                    Interactions.trigger( "drawertop" );
+                } else if ( !up && !addClass( "drawerBottomRevealed" ) ) {
+                    Interactions.trigger( "drawerbottom" );
+                }
+            }
+            
+            function track( e ) {
+                var wheelData, up,
+                    y = (window.pageYOffset !== undefined) ?
+                        window.pageYOffset :
+                        (
+                            document.documentElement ||
+                            document.body.parentNode ||
+                            document.body
+                        ).scrollTop
+                ;
+                // Check for max tresh-hold (so as not to create too
+                // long of a buffer)
+                // Add and check against 0 (to make sure there is a
+                // buffer)
+                // Check if still valid (so as not to waste time
+                // calculating useless info)
+                if ( i < 4 && (i = i + 2) > 0 && valid ) {
+                    wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
+                    up = wheelData > 0;
+                    valid = valid && Math.abs(wheelData) > 0 && y == startY;
+                    if ( i > 2 && valid ) {
+                        setClass( up );
+                    }
                 }
             }
 
@@ -91,15 +137,11 @@ var Interactions = ( function( ) {
                             ).scrollTop,
                         e = e1.params||e1
                     ;
+                    
+                    startY = y;
 
-                    //Some hackeridoo to figure this out between WebKit / Mozilla
-                    if ( typeof e.axis === "undefined" ) {
-                        isVertical = Math.abs( e.wheelDeltaY ) > Math.abs( e.wheelDeltaX );
-                    } else {
-                        isVertical = e.axis > 1;
-                    }
-
-                    valid = y <= 0 && isVertical;
+                    isVert = isVertical( e );
+                    valid = isVert;
 
                     start = e;
                     i = 2;
@@ -107,28 +149,12 @@ var Interactions = ( function( ) {
                     return valid;
                 },
                 track: function( e1 ) {
-                    var wheelData,
-                        e = e1.params||e1
-                    ;
+                    var e = e1.params||e1;
                     if (!isTracking) {
                         this.start( e );
                         reset();
                     } else {
-                        // Check for max tresh-hold (so as not to create too
-                        // long of a buffer)
-                        // Add and check against 0 (to make sure there is a
-                        // buffer)
-                        // Check if still valid (so as not to waste time
-                        // calculating useless info)
-                        if ( i < 4 && (i = i + 2) > 0 && valid ) {
-                            wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
-                            valid = valid && wheelData > 0;
-                            if ( i > 2 && valid ) {
-                                if ( !addClass( "drawerTopRevealed" ) ) {
-                                    Interactions.trigger( "drawertop" );
-                                }
-                            }
-                        }
+                        track( e );
                     }
                     return valid;
                 },
