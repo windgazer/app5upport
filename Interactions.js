@@ -64,7 +64,7 @@ var Interactions = ( function( ) {
                 }
             };
         }( ) ),
-        scrollUp = ( function( ) {
+        scrollVertical = ( function( ) {
             var valid = true,
                 isTracking,
                 start,
@@ -320,7 +320,7 @@ var Interactions = ( function( ) {
     }
 
     function trackScrollGestures( e ) {
-        scrollUp.track( e );
+        scrollVertical.track( e );
         scrollLeft.track( e );
     }
 

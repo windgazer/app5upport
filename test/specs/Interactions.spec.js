@@ -263,6 +263,29 @@ describe( "Interactions", function( ) {
 
         } );
         
+        it( "triggers bottom when scrolling up beyond the bottom", function( ) {
+
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                }
+            ;
+            Interactions.on( 'drawerbottom', fireEvent );
+
+            overdrive = 5;
+            m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: 150 } );
+            m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: 150 } );
+            m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: 150 } );
+            up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 2, detail: 150 } );
+            
+            //Actual test and such is running in AfterEach
+            test = function() {
+                expect( getBody( ).classList.contains("drawerBottomRevealed") ).toBe( true );
+                expect( fired ).toBe( true );
+            };
+
+        } );
+        
         it( "triggers left when scrolling left beyond the side", function( ) {
             
             var fired = false,
