@@ -350,7 +350,7 @@ describe( "Interactions", function( ) {
             runs( function( ) {
 
                 test();
-                getBody().classList.remove("drawerTopRevealed");
+                Interactions.clear();
 
             } );
         });

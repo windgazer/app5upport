@@ -24,7 +24,9 @@ var Interactions = ( function( ) {
             MOVE: "PointerMove"
         },
         Interactions = {
-            
+            clear: function() {
+                clearClasses( );
+            }
         },
         getBody = ( function() {
             var b = null;
