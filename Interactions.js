@@ -67,7 +67,6 @@ var Interactions = ( function( ) {
         scrollVertical = ( function( ) {
             var valid = true,
                 isTracking,
-                start,
                 startY,
                 isVert,
                 i
@@ -143,7 +142,6 @@ var Interactions = ( function( ) {
                     isVert = isVertical( e );
                     valid = isVert;
 
-                    start = e;
                     i = 2;
                     isTracking = true;
                     return valid;
@@ -159,22 +157,14 @@ var Interactions = ( function( ) {
                     return valid;
                 },
                 isTriggered: function( e ) {
-                    var h, w;
-                    if (valid) {
-                        h = e.clientY - start.clientY;
-                        w = Math.abs( e.clientX - start.clientX );
-                        
-                        valid = h > 35 && (w === 0 || h/w > 2);
-                    }
                     return valid;
                 }
             };
         }( ) ),
-        scrollLeft = ( function( ) {
+        scrollHorizontal = ( function( ) {
             var valid = true,
-                isVertical,
                 isTracking,
-                start,
+                startX,
                 i
             ;
             
@@ -184,6 +174,27 @@ var Interactions = ( function( ) {
                 } else {
                     isTracking = false;
                 }
+            }
+            
+            function setClass( wheeldata ) {
+                if ( wheeldata > 0 && !addClass( "drawerLeftRevealed" )) {
+                    Interactions.trigger( "drawerleft" );
+                    valid = false;
+                } else if ( wheeldata < 0 && !addClass( "drawerRightRevealed" )) {
+                    Interactions.trigger( "drawerright" );
+                    valid = false;
+                }
+            }
+            
+            function isVertical( e ) {
+                var vertical = true;
+                //Some hackeridoo to figure this out between WebKit / Mozilla
+                if ( typeof e.axis === "undefined" ) {
+                    vertical = Math.abs( e.wheelDeltaY ) > Math.abs( e.wheelDeltaX );
+                } else {
+                    vertical = e.axis > 1;
+                }
+                return vertical;
             }
 
             return {
@@ -195,8 +206,11 @@ var Interactions = ( function( ) {
                                 document.body.parentNode ||
                                 document.body
                             ).scrollLeft,
-                        e = e1.params||e1
+                        e = e1.params||e1,
+                        isVertical
                     ;
+                    
+                    startX = x;
 
                     //Some hackeridoo to figure this out between WebKit / Mozilla
                     if ( typeof e.axis === "undefined" ) {
@@ -205,16 +219,16 @@ var Interactions = ( function( ) {
                         isVertical = e.axis > 1;
                     }
 
-                    valid = x <= 0 && !isVertical;
+                    valid = !isVertical;
 
-                    start = e;
                     i = 2;
                     isTracking = true;
                     return valid;
                 },
                 track: function( e1 ) {
                     var wheelData,
-                        e = e1.params||e1
+                        e = e1.params||e1,
+                        isVert = isVertical( e )
                     ;
                     if (!isTracking) {
                         this.start( e );
@@ -226,26 +240,18 @@ var Interactions = ( function( ) {
                         // buffer)
                         // Check if still valid (so as not to waste time
                         // calculating useless info)
-                        if ( i < 4 && (i = i + 2) > 0 && valid ) {
+                        if ( !isVert && i < 6 && (i = i + 2) > 0 && valid ) {
                             wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
-                            valid = valid && wheelData > 0;
-                            if ( i > 2 && valid ) {
-                                if (!addClass( "drawerLeftRevealed" )) {
-                                    Interactions.trigger( "drawerleft" );
-                                }
+                            valid = valid && Math.abs(wheelData) > 0;
+                            console.log( isVert, valid, e.axis, wheelData );
+                            if ( i > 4 && valid ) {
+                                setClass( wheelData );
                             }
                         }
                     }
                     return valid;
                 },
                 isTriggered: function( e ) {
-                    var h, w;
-                    if (valid) {
-                        h = e.clientY - start.clientY;
-                        w = Math.abs( e.clientX - start.clientX );
-                        
-                        valid = h > 35 && (w === 0 || h/w > 2);
-                    }
                     return valid;
                 }
             };
@@ -321,7 +327,7 @@ var Interactions = ( function( ) {
 
     function trackScrollGestures( e ) {
         scrollVertical.track( e );
-        scrollLeft.track( e );
+        scrollHorizontal.track( e );
     }
 
     function init() {

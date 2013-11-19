@@ -296,6 +296,7 @@ describe( "Interactions", function( ) {
             Interactions.on( 'drawerleft', fireEvent );
 
             overdrive = 5;
+            down = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
             m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
             m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
             m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: -150 } );
@@ -304,6 +305,29 @@ describe( "Interactions", function( ) {
             //Actual test and such is running in AfterEach
             test = function() {
                 expect( getBody( ).classList.contains("drawerLeftRevealed") ).toBe( true );
+                expect( fired ).toBe( true );
+            };
+
+        } );
+        
+        it( "triggers right when scrolling right beyond the side", function( ) {
+            
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                }
+            ;
+            Interactions.on( 'drawerright', fireEvent );
+
+            overdrive = 5;
+            m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
+            m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
+            m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
+            up = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
+            
+            //Actual test and such is running in AfterEach
+            test = function() {
+                expect( getBody( ).classList.contains("drawerRightRevealed") ).toBe( true );
                 expect( fired ).toBe( true );
             };
 
