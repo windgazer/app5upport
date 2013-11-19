@@ -80,6 +80,17 @@ var Interactions = ( function( ) {
                 }
             }
             
+            function start( e ) {
+                startY = getY();
+
+                isVert = isVertical( e );
+                valid = isVert;
+
+                i = 2;
+                isTracking = true;
+                return valid;
+            }
+            
             function isVertical( e ) {
                 var vertical = true;
                 //Some hackeridoo to figure this out between WebKit / Mozilla
@@ -92,22 +103,27 @@ var Interactions = ( function( ) {
             }
             
             function setClass( up ) {
-                if ( up && !addClass( "drawerTopRevealed" ) ) {
+                if ( up && addClass( "drawerTopRevealed" ) ) {
                     Interactions.trigger( "drawertop" );
-                } else if ( !up && !addClass( "drawerBottomRevealed" ) ) {
+                } else if ( !up && addClass( "drawerBottomRevealed" ) ) {
                     Interactions.trigger( "drawerbottom" );
                 }
             }
             
-            function track( e ) {
-                var wheelData, up,
-                    y = (window.pageYOffset !== undefined) ?
+            function getY( ) {
+                return (window.pageYOffset !== undefined) ?
                         window.pageYOffset :
                         (
                             document.documentElement ||
                             document.body.parentNode ||
                             document.body
                         ).scrollTop
+                ;
+            }
+            
+            function track( e ) {
+                var wheelData, up,
+                    y = getY()
                 ;
                 // Check for max tresh-hold (so as not to create too
                 // long of a buffer)
@@ -116,7 +132,7 @@ var Interactions = ( function( ) {
                 // Check if still valid (so as not to waste time
                 // calculating useless info)
                 if ( i < 4 && (i = i + 2) > 0 && valid ) {
-                    wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
+                    wheelData = e.detail ? e.detail * -1 : e.wheelDeltaY / 10;
                     up = wheelData > 0;
                     valid = valid && Math.abs(wheelData) > 0 && y == startY;
                     if ( i > 2 && valid ) {
@@ -126,30 +142,10 @@ var Interactions = ( function( ) {
             }
 
             return {
-                start: function( e1 ) {
-                    var y = (window.pageYOffset !== undefined) ?
-                            window.pageYOffset :
-                            (
-                                document.documentElement ||
-                                document.body.parentNode ||
-                                document.body
-                            ).scrollTop,
-                        e = e1.params||e1
-                    ;
-                    
-                    startY = y;
-
-                    isVert = isVertical( e );
-                    valid = isVert;
-
-                    i = 2;
-                    isTracking = true;
-                    return valid;
-                },
                 track: function( e1 ) {
                     var e = e1.params||e1;
                     if (!isTracking) {
-                        this.start( e );
+                        start( e );
                         reset();
                     } else {
                         track( e );
@@ -175,12 +171,22 @@ var Interactions = ( function( ) {
                     isTracking = false;
                 }
             }
+
+            function start( e ) {
+                startX = getX();
+
+                valid = !isVertical( e );
+
+                i = 2;
+                isTracking = true;
+                return valid;
+            }
             
             function setClass( wheeldata ) {
-                if ( wheeldata > 0 && !addClass( "drawerLeftRevealed" )) {
+                if ( wheeldata > 0 && addClass( "drawerLeftRevealed" )) {
                     Interactions.trigger( "drawerleft" );
                     valid = false;
-                } else if ( wheeldata < 0 && !addClass( "drawerRightRevealed" )) {
+                } else if ( wheeldata < 0 && addClass( "drawerRightRevealed" )) {
                     Interactions.trigger( "drawerright" );
                     valid = false;
                 }
@@ -196,58 +202,48 @@ var Interactions = ( function( ) {
                 }
                 return vertical;
             }
+            
+            function getX() {
+                return (window.pageXOffset !== undefined) ?
+                        window.pageXOffset :
+                        (
+                            document.documentElement ||
+                            document.body.parentNode ||
+                            document.body
+                        ).scrollLeft
+                ;
+            }
+            
+            function track( e ) {
+                var wheelData, left,
+                    x = getX()
+                ;
+                // Check for max tresh-hold (so as not to create too
+                // long of a buffer)
+                // Add and check against 0 (to make sure there is a
+                // buffer)
+                // Check if still valid (so as not to waste time
+                // calculating useless info)
+                if ( i < 6 && (i = i + 2) > 0 && valid ) {
+                    wheelData = e.detail ? e.detail * -1 : e.wheelDeltaX / 10;
+                    valid = valid && Math.abs(wheelData) > 0;
+                    if ( i > 4 && valid ) {
+                        setClass( wheelData );
+                    }
+                }
+            }
 
             return {
-                start: function( e1 ) {
-                    var x = (window.pageXOffset !== undefined) ?
-                            window.pageXOffset :
-                            (
-                                document.documentElement ||
-                                document.body.parentNode ||
-                                document.body
-                            ).scrollLeft,
-                        e = e1.params||e1,
-                        isVertical
-                    ;
-                    
-                    startX = x;
-
-                    //Some hackeridoo to figure this out between WebKit / Mozilla
-                    if ( typeof e.axis === "undefined" ) {
-                        isVertical = Math.abs( e.wheelDeltaY ) > Math.abs( e.wheelDeltaX );
-                    } else {
-                        isVertical = e.axis > 1;
-                    }
-
-                    valid = !isVertical;
-
-                    i = 2;
-                    isTracking = true;
-                    return valid;
-                },
                 track: function( e1 ) {
                     var wheelData,
                         e = e1.params||e1,
                         isVert = isVertical( e )
                     ;
                     if (!isTracking) {
-                        this.start( e );
+                        start( e );
                         reset();
                     } else {
-                        // Check for max tresh-hold (so as not to create too
-                        // long of a buffer)
-                        // Add and check against 0 (to make sure there is a
-                        // buffer)
-                        // Check if still valid (so as not to waste time
-                        // calculating useless info)
-                        if ( !isVert && i < 6 && (i = i + 2) > 0 && valid ) {
-                            wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 10;
-                            valid = valid && Math.abs(wheelData) > 0;
-                            console.log( isVert, valid, e.axis, wheelData );
-                            if ( i > 4 && valid ) {
-                                setClass( wheelData );
-                            }
-                        }
+                        track( e );
                     }
                     return valid;
                 },

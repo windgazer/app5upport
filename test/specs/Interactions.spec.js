@@ -320,6 +320,7 @@ describe( "Interactions", function( ) {
             Interactions.on( 'drawerright', fireEvent );
 
             overdrive = 5;
+            down = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
             m1 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
             m2 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
             m3 = eventHacks.getBasicEvent( "DOMMouseScroll", false, { axis: 1, detail: 150 } );
