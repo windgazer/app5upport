@@ -11,6 +11,7 @@
  * viable polyfill for pointerevents and in time should no longer be a
  * requirement as browsers implement a viable support.
  * 
+ * @depends rAF.js
  * @depends points.js
  * @depends RSVP.js
  */
@@ -218,6 +219,10 @@ var Interactions = ( function( ) {
                 var wheelData, left,
                     x = getX()
                 ;
+                
+                if ( valid && isVertical( e ) ) {
+                    valid = false;
+                }
                 // Check for max tresh-hold (so as not to create too
                 // long of a buffer)
                 // Add and check against 0 (to make sure there is a
@@ -225,6 +230,10 @@ var Interactions = ( function( ) {
                 // Check if still valid (so as not to waste time
                 // calculating useless info)
                 if ( i < 6 && (i = i + 2) > 0 && valid ) {
+                    //Carefull, could not write test, but e.wheelDelta will take the
+                    //e.wheelDeltaY value when it is measurable, this can cause false
+                    //left-swipe when swiping slightly up and right, always use
+                    //wheelDeltaX when working with horizontal scrolling!!
                     wheelData = e.detail ? e.detail * -1 : e.wheelDeltaX / 10;
                     valid = valid && Math.abs(wheelData) > 0;
                     if ( i > 4 && valid ) {
