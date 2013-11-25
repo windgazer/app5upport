@@ -39,7 +39,7 @@ var Interactions = ( function( ) {
             };
         }()),
         swipeDown = ( function( ) {
-            var valid = true,
+            var valid = false,
                 start
             ;
 
@@ -62,6 +62,35 @@ var Interactions = ( function( ) {
                         w = Math.abs( e.clientX - start.clientX );
                         
                         valid = h > 35 && (w === 0 || h/w > 2);
+                    }
+                    return valid;
+                }
+            };
+        }( ) ),
+        swipeRight = ( function( ) {
+            var valid = false,
+                start
+            ;
+
+            return {
+                start: function( e ) {
+                    valid = e.clientX < 32;
+                    start = e;
+                    return valid;
+                },
+                track: function( e ) {
+                    if (valid) {
+                        valid = start.clientX < e.clientX;
+                    }
+                    return valid;
+                },
+                isTriggered: function( e ) {
+                    var h, w;
+                    if (valid) {
+                        h = e.clientY - start.clientY;
+                        w = Math.abs( e.clientX - start.clientX );
+                        
+                        valid = w > 35 && (w === 0 || w/h > 2);
                     }
                     return valid;
                 }
@@ -312,12 +341,17 @@ var Interactions = ( function( ) {
 
     function trackGestures( e ) {        
         swipeDown.track( e );
+        swipeRight.track( e );
     }
 
     function stopTrackingGestures( e ) {
         if (swipeDown.isTriggered( e )) {
             addClass( "drawerTopRevealed" );
             Interactions.trigger( "drawertop" );
+        }
+        if (swipeRight.isTriggered( e )) {
+            addClass( "drawerLeftRevealed" );
+            Interactions.trigger( "drawerleft" );
         }
         removeListener( EVENTS.MOVE, trackGestures );
         removeListener( EVENTS.UP, stopTrackingGestures );
@@ -328,6 +362,7 @@ var Interactions = ( function( ) {
 
         clearClasses();
         swipeDown.start( e );
+        swipeRight.start( e );
         addListener( EVENTS.MOVE, trackGestures );
         addListener( EVENTS.UP, stopTrackingGestures );
     }

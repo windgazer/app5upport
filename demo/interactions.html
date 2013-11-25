@@ -37,6 +37,15 @@
 			user-select: none;
 		}
 		
+		#content {
+			background: blue;
+			display: block;
+			height: 100%;
+			margin: -1px;
+			padding: 1px;
+			wdith: 100%;
+		}
+		
 		body::before, body::after {
 			content: "\00a0"; /* No-break space character */
 			display: block;
@@ -94,7 +103,7 @@
 		<li>Nav 1</li>
 		<li>Nav 2</li>
 	</menu></aside>
-    <main>
+    <main id="content">
     	<p>This is the testing area :)</p>
    	</main>
 

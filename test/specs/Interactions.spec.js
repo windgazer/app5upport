@@ -179,7 +179,7 @@ describe( "Interactions", function( ) {
                     fired = true;
                 }
             ;
-            Interactions.on( 'drawertop', fireEvent );
+	    Interactions.on( 'drawerleft', fireEvent );
 
             overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:1,clientY:10 } );
