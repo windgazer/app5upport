@@ -38,12 +38,17 @@
 		}
 		
 		#content {
-			background: blue;
+			background: #1DEA75;
+			box-shadow: 0 0 0.25em 0.25em rgba( 32,32,32 ,0.25 );
 			display: block;
 			height: 100%;
-			margin: -1px;
-			padding: 1px;
-			wdith: 100%;
+			margin: -1px 0;
+			padding: 1px 1em;
+			position: relative;
+			left: 0;
+			z-index: 2;
+			-webkit-transition: left 0.25s ease-out 0;
+			transition: left 0.25s ease-out 0;
 		}
 		
 		body::before, body::after {
@@ -59,32 +64,41 @@
 			-webkit-transition: margin 0.5s ease-in 0;
 			transition: margin 0.5s ease-in 0;
 		}
-		.drawerLeftRevealed .leftdrawer {
-			margin-left: 0;
+		.drawerLeftRevealed #content {
+			left: 10em;
 
-			-webkit-transition: margin 0.5s ease-in 0;
-			transition: margin 0.5s ease-in 0;
+			-webkit-transition: left 0.5s ease-in 0;
+			transition: left 0.5s ease-in 0;
+		}
+		.drawerRightRevealed #content {
+			left: -10em;
+
+			-webkit-transition: left 0.5s ease-in 0;
+			transition: left 0.5s ease-in 0;
 		}
 
 		.topdrawer {
 			background: #8ADA55;
-			box-shadow: inset 0 -0.25em 0.25em rgba( 32,32,32 ,0.5 );
 			height: 3.5em;
 			margin-top: -3.5em;
 
 			-webkit-transition: margin 0.25s ease-out 0;
 			transition: margin 0.25s ease-out 0;
 		}
-		.leftdrawer {
+		.leftdrawer,
+		.rightdrawer {
 			float: left;
 			height: 100%;
 			background: #8ADA55;
-			box-shadow: inset -0.25em 0 0.25em rgba( 32,32,32 ,0.5 );
 			width: 10em;
-			margin-left: -10em;
+			margin-right: -10em;
 
-			-webkit-transition: margin 0.25s ease-out 0;
-			transition: margin 0.25s ease-out 0;
+			z-index: 1;
+		}
+		.rightdrawer {
+			float: right;
+			margin-left: -10em;
+			margin-right: 0em;
 		}
 		.drawer > menu {
 			margin: 0;
@@ -103,8 +117,12 @@
 		<li>Nav 1</li>
 		<li>Nav 2</li>
 	</menu></aside>
+	<aside class="rightdrawer drawer"><menu>
+		<li>Nav 1</li>
+		<li>Nav 2</li>
+	</menu></aside>
     <main id="content">
-    	<p>This is the testing area :)</p>
+    	<p>This is the testing area :) Swipe me up, down, left or right, using scroll-wheel / touch-pad. Or, on mobile, swipe from edge!</p>
    	</main>
 
 </body>

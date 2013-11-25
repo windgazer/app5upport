@@ -220,6 +220,31 @@ describe( "Interactions", function( ) {
             
         } );
 
+        it( "trigger on right-edge and left swipe", function( ) {
+            
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                },
+                w = document.body.clientWidth
+            ;
+            Interactions.on( 'drawerright', fireEvent );
+
+            overdrive = 1;
+            down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:(w - 1),clientY:10 } );
+            m1 = eventHacks.getBasicEvent( "pointermove", false, { clientX:(w - 10),clientY:10 } );
+            m2 = eventHacks.getBasicEvent( "pointermove", false, { clientX:(w - 20),clientY:10 } );
+            m3 = eventHacks.getBasicEvent( "pointermove", false, { clientX:(w - 30),clientY:10 } );
+            up = eventHacks.getBasicEvent( "pointerup", false, { clientX:(w - 40),clientY:10 } );
+
+            //Actual test and such is running in AfterEach
+            test = function() {
+                expect( getBody( ).classList.contains("drawerRightRevealed") ).toBe( true );
+                expect( fired ).toBe( true );
+            };
+            
+        } );
+
         it( "doesn't trigger on down swipe below 15 pixels from top", function( ) {
             
             var fired = false,

@@ -69,30 +69,29 @@ var Interactions = ( function( ) {
         }( ) ),
         swipeRight = ( function( ) {
             var valid = false,
+                treshHold = 32,
                 start
             ;
 
             return {
                 start: function( e ) {
-                    valid = e.clientX < 32;
+                    var max = getBody().clientWidth - treshHold;
+                    valid = e.clientX < treshHold || e.clientX > max;
                     start = e;
                     return valid;
                 },
                 track: function( e ) {
-                    if (valid) {
-                        valid = start.clientX < e.clientX;
-                    }
                     return valid;
                 },
                 isTriggered: function( e ) {
                     var h, w;
-                    if (valid) {
-                        h = e.clientY - start.clientY;
-                        w = Math.abs( e.clientX - start.clientX );
+                    if ( valid ) {
+                        h = Math.abs( e.clientY - start.clientY );
+                        w = e.clientX - start.clientX;
                         
-                        valid = w > 35 && (w === 0 || Math.abs(w/h) > 2);
+                        valid = Math.abs( w ) > 35 && ( h === 0 || Math.abs(w)/h > 2 );
                     }
-                    return valid;
+                    return valid?( w>0?1:2 ):-1;
                 }
             };
         }( ) ),
@@ -345,13 +344,19 @@ var Interactions = ( function( ) {
     }
 
     function stopTrackingGestures( e ) {
-        if (swipeDown.isTriggered( e )) {
+        var horizontal = swipeRight.isTriggered( e );
+        if ( swipeDown.isTriggered( e ) ) {
             addClass( "drawerTopRevealed" );
             Interactions.trigger( "drawertop" );
         }
-        if (swipeRight.isTriggered( e )) {
-            addClass( "drawerLeftRevealed" );
-            Interactions.trigger( "drawerleft" );
+        if ( horizontal > 0 ) {
+            if ( horizontal === 1 ) {
+                addClass( "drawerLeftRevealed" );
+                Interactions.trigger( "drawerleft" );
+            } else {
+                addClass( "drawerRightRevealed" );
+                Interactions.trigger( "drawerright" );
+            }
         }
         removeListener( EVENTS.MOVE, trackGestures );
         removeListener( EVENTS.UP, stopTrackingGestures );
