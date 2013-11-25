@@ -179,7 +179,7 @@ describe( "Interactions", function( ) {
                     fired = true;
                 }
             ;
-	    Interactions.on( 'drawerleft', fireEvent );
+            Interactions.on( 'drawerleft', fireEvent );
 
             overdrive = 1;
             down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:1,clientY:10 } );
@@ -187,6 +187,30 @@ describe( "Interactions", function( ) {
             m2 = eventHacks.getBasicEvent( "pointermove", false, { clientX:30,clientY:10 } );
             m3 = eventHacks.getBasicEvent( "pointermove", false, { clientX:40,clientY:10 } );
             up = eventHacks.getBasicEvent( "pointerup", false, { clientX:50,clientY:10 } );
+
+            //Actual test and such is running in AfterEach
+            test = function() {
+                expect( getBody( ).classList.contains("drawerLeftRevealed") ).toBe( true );
+                expect( fired ).toBe( true );
+            };
+            
+        } );
+
+        it( "trigger on left-edge and right swipe, with slight upward angle", function( ) {
+            
+            var fired = false,
+                fireEvent = function() {
+                    fired = true;
+                }
+            ;
+            Interactions.on( 'drawerleft', fireEvent );
+
+            overdrive = 1;
+            down = eventHacks.getBasicEvent( "pointerdown", false, { clientX:1,clientY:15 } );
+            m1 = eventHacks.getBasicEvent( "pointermove", false, { clientX:20,clientY:14 } );
+            m2 = eventHacks.getBasicEvent( "pointermove", false, { clientX:30,clientY:13 } );
+            m3 = eventHacks.getBasicEvent( "pointermove", false, { clientX:40,clientY:12 } );
+            up = eventHacks.getBasicEvent( "pointerup", false, { clientX:50,clientY:11 } );
 
             //Actual test and such is running in AfterEach
             test = function() {

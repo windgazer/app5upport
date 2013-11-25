@@ -90,7 +90,7 @@ var Interactions = ( function( ) {
                         h = e.clientY - start.clientY;
                         w = Math.abs( e.clientX - start.clientX );
                         
-                        valid = w > 35 && (w === 0 || w/h > 2);
+                        valid = w > 35 && (w === 0 || Math.abs(w/h) > 2);
                     }
                     return valid;
                 }
