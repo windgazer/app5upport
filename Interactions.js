@@ -360,6 +360,8 @@ var Interactions = ( function( ) {
         }
         removeListener( EVENTS.MOVE, trackGestures );
         removeListener( EVENTS.UP, stopTrackingGestures );
+        e.preventDefault();
+        return false;
     }
 
     function startTrackingGestures( e ) {
@@ -370,11 +372,15 @@ var Interactions = ( function( ) {
         swipeRight.start( e );
         addListener( EVENTS.MOVE, trackGestures );
         addListener( EVENTS.UP, stopTrackingGestures );
+        e.preventDefault();
+        return false;
     }
 
     function trackScrollGestures( e ) {
         scrollVertical.track( e );
         scrollHorizontal.track( e );
+        e.preventDefault();
+        return false;
     }
 
     function init() {
