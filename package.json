@@ -9,6 +9,7 @@
     "jasmine-node": "",
     "testem": "",
     "csslint": "",
+    "jshint": "",
     "matchdep": "~0.1.2",
     "semver": "~2.1.0",
     "grunt": "~0.4.1",

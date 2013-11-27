@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title data-i18n="dialog.gameOver.desc">PointerEvents Testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="no" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="apple-touch-icon-precomposed" href="assets/icon.png" />
+    <link rel="shortcut icon" href="icon.png" />
+
+    <!-- build:js js/libs.js -->
+    <script src="../libs/rAF/index.js"></script>
+    <script src="../libs/rsvp/browser/rsvp.min.js"></script>
+    <script src="../libs/points/points.min.js"></script>
+    <!-- endbuild -->
+    <script src="../Interactions.js"></script>
+
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow: hidden;
+			-ms-touch-action: none;
+			touch-action: none;
+		}
+		
+		body {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+		
+		#content {
+			background: #1DEA75;
+			box-shadow: 0 0 0.25em 0.25em rgba( 32,32,32 ,0.25 );
+			display: block;
+			height: 100%;
+			margin: -1px 0;
+			padding: 1px 1em;
+			position: relative;
+			left: 0;
+			z-index: 2;
+			-webkit-transition: left 0.25s ease-out 0;
+			transition: left 0.25s ease-out 0;
+		}
+		
+		body::before, body::after {
+			content: "\00a0"; /* No-break space character */
+			display: block;
+			overflow: hidden;
+			height: 0;
+		}
+		
+		.drawerTopRevealed .topdrawer {
+			margin-top: 0;
+
+			-webkit-transition: margin 0.5s ease-in 0;
+			transition: margin 0.5s ease-in 0;
+		}
+		.drawerLeftRevealed #content {
+			left: 10em;
+
+			-webkit-transition: left 0.5s ease-in 0;
+			transition: left 0.5s ease-in 0;
+		}
+		.drawerRightRevealed #content {
+			left: -10em;
+
+			-webkit-transition: left 0.5s ease-in 0;
+			transition: left 0.5s ease-in 0;
+		}
+
+		.topdrawer {
+			background: #8ADA55;
+			height: 3.5em;
+			margin-top: -3.5em;
+
+			-webkit-transition: margin 0.25s ease-out 0;
+			transition: margin 0.25s ease-out 0;
+		}
+		.leftdrawer,
+		.rightdrawer {
+			float: left;
+			height: 100%;
+			background: #8ADA55;
+			width: 10em;
+			margin-right: -10em;
+
+			z-index: 1;
+		}
+		.rightdrawer {
+			float: right;
+			margin-left: -10em;
+			margin-right: 0em;
+		}
+		.drawer > menu {
+			margin: 0;
+			padding: 0.25em 1em 0.5em;
+		}
+	</style>
+
+</head>
+<body>
+
+	<aside class="topdrawer drawer"><menu>
+		<li>Option 1</li>
+		<li>Option 2</li>
+	</menu></aside>
+	<aside class="leftdrawer drawer"><menu>
+		<li>Nav 1</li>
+		<li>Nav 2</li>
+	</menu></aside>
+	<aside class="rightdrawer drawer"><menu>
+		<li>Nav 1</li>
+		<li>Nav 2</li>
+	</menu></aside>
+    <main id="content">
+    	<p>This is the testing area :) Swipe me up, down, left or right, using scroll-wheel / touch-pad. Or, on mobile, swipe from edge!</p>
+   	</main>
+
+</body>
+</html>

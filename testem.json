@@ -1,27 +1,30 @@
 {
-    "launchers-disabled": {
+    "launchers": {
         "JasmineNode": {
             "command": "jasmine-node test/node"
         },
-        "CSSLint": {
-            "command": "csslint css"
+        "JSHint": {
+            "command": "jshint *.js"
         }
     },
     "launch_in_dev": [
-        "PhantomJS",
-        "CSSLint"
+    	"JSHint",
+        "PhantomJS"
     ],
     "launch_in_ci": [
+    	"JSHint",
         "PhantomJS"
     ],
     "src_files": [
         "test/ut.js",
         "libs/rsvp/browser/rsvp.js",
+        "libs/points/points.js",
         "Events.js",
         "HTTPRequest.js",
         "Resolutions.js",
         "ClassTemplate.js",
         "FastButtonListener.js",
+        "Interactions.js",
         "test/specs/**/*.js"
     ],
     "watch_files": [
