@@ -1,15 +1,17 @@
+/* global Events, requestAnimationFrame */
 (function(){
+    "use strict";
 
     var	HELPER_ID = "WGD_Resolutions_Helper",
         helper = null,
         body = null,
-        vendors = ['ms', 'moz', 'webkit', 'o']
+        vendors = ["ms", "moz", "webkit", "o"]
     ;
 
     for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
-        || window[vendors[x]+'CancelRequestAnimationFrame'];
+        window.requestAnimationFrame = window[vendors[x]+"RequestAnimationFrame"];
+        window.cancelAnimationFrame = window[vendors[x]+"CancelAnimationFrame"] || 
+        window[vendors[x]+"CancelRequestAnimationFrame"];
     }
 
     function getBody() {
@@ -84,17 +86,18 @@
                 //24 is a magic number that appears to work well for
                 // no apparent reason :)
                 fontSize = Math.round(size.min / 24)
-            ; 
-            if (body.classList) { //Set body class `is-scaling` so that transitions / animations can be put on hold.
-                body.classList.add('is-scaling');
+            ;
+            //Set body class `is-scaling` so that transitions / animations can be put on hold.
+            if (body.classList && requestAnimationFrame) { 
+                body.classList.add("is-scaling");
             }
             Resolutions.setOrientation(size.landscape?"landscape":"portrait");
             body.style.fontSize = fontSize + "px";
-            if (body.classList) {
+            if (body.classList && requestAnimationFrame) {
                 //Remove classname on next available animation-frame
                 //This will ensure page reflow has completed.
                 requestAnimationFrame(function() {
-                    body.classList.remove('is-scaling');
+                    body.classList.remove("is-scaling");
                 });
             }
         },
@@ -109,7 +112,10 @@
                 min
             ;
 
-            if (!('ontouchstart' in window) && (width==240||width==320||width==360||width==640)) {
+            if ( 
+                   !( "ontouchstart" in window ) && 
+                   ( width==240||width==320||width==360||width==640 ) 
+               ) {
                 //Skipping width/height guesstimations for some known presets.
                 //Guesstimation fails on most mobile devices unfortunately.
                 //Added ontouchstart check because iOS fakes screen-res values.
@@ -129,7 +135,12 @@
         setOrientation:function(orientation) {
             var body = getBody();
 
-            body.className = body.className.replace(/ ?orientation_[^ ]+/,"") + " orientation_" + orientation;
+            body.className = 
+                body.className.replace(/ ?orientation_[^ ]+/,"") + 
+                " orientation_" + 
+                orientation
+            ;
+            
         }
 
     };
