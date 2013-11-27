@@ -37,34 +37,56 @@ module.exports = function( grunt ) {
                         }
                     }
                 )
+            },
+            normal : {
+                files : grunt.file.expandMapping (
+                    [
+                        "*.js", "!Gruntfile.js",
+                        "libs/rsvp/browser/rsvp.js",
+                        "libs/custom/*.js"
+                    ],
+                    "<%= pkg.build.target %>-normal/",
+                    {
+                        flatten : true
+                    }
+                )
+            },
+            renames : {
+                options: {
+                    flatten: true
                 },
-                normal : {
-                    files : grunt.file.expandMapping (
-                        [
-                            "*.js", "!Gruntfile.js",
-                            "libs/rsvp/browser/rsvp.js",
-                            "libs/custom/*.js"
-                        ],
-                        "<%= pkg.build.target %>-normal/",
-                        {
-                            flatten : true
-                        }
-                    )
-                },
-                renames : {
-                    options: {
-                        flatten: true
-                    },
-                    files : {
-                        "libs/custom/rAF.js": "libs/rAF/index.js"
-                    } 
+                files : {
+                    "libs/custom/rAF.js": "libs/rAF/index.js"
+                } 
+            }
+        },
+        bumpup: {
+            files: ['package.json','bower.json'],
+            options: {
+                normalize: true
+            },
+            setters: {
+                uiv: function (old, releaseType, options) {
+                    return (++old).toString();
                 }
             }
+        },
+        tagrelease: {
+            file: 'package.json',
+            commit:  true,
+            message: 'Release %version%',
+            prefix:  'v',
+            annotate: false,
         }
-    );
+    } );
 
     // Default task(s).
     grunt.registerTask( "default", [ "uglify", "copy:renames", "copy:minify" ] );
     grunt.registerTask( "npm", [ "copy:renames", "copy:normal" ] );
+    grunt.registerTask('tag', function (type) {
+        type = type ? type : 'patch'; // Default release type
+        grunt.task.run('tagrelease'); // Tag
+        grunt.task.run('bumpup:' + type); // Bump up the version
+    });
 
 };
