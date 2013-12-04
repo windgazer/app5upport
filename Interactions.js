@@ -344,30 +344,39 @@ var Interactions = ( function( ) {
     }
 
     function stopTrackingGestures( e ) {
-        var horizontal = swipeRight.isTriggered( e );
+        var horizontal = swipeRight.isTriggered( e ),
+            triggered = false;
         if ( swipeDown.isTriggered( e ) ) {
             addClass( "drawerTopRevealed" );
             Interactions.trigger( "drawertop" );
+            triggered = true;
         }
         if ( horizontal > 0 ) {
             if ( horizontal === 1 ) {
                 addClass( "drawerLeftRevealed" );
                 Interactions.trigger( "drawerleft" );
+                triggered = true;
             } else {
                 addClass( "drawerRightRevealed" );
                 Interactions.trigger( "drawerright" );
+                triggered = true;
             }
         }
+
         removeListener( EVENTS.MOVE, trackGestures );
         removeListener( EVENTS.UP, stopTrackingGestures );
-        e.preventDefault();
-        return false;
+
+        if ( triggered ) {
+            e.preventDefault();
+            return false;
+        } else {
+            clearClasses();
+        }
     }
 
     function startTrackingGestures( e ) {
         var b = getBody( );
 
-        clearClasses();
         swipeDown.start( e );
         swipeRight.start( e );
         addListener( EVENTS.MOVE, trackGestures );
