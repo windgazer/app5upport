@@ -4,7 +4,7 @@
   "main": "index.html",
   "dependencies": {
     "points": "https://github.com/Rich-Harris/Points.git#75e853355624df6862eb106044bc823bef2d92d2",
-    "rsvp": "https://github.com/tildeio/rsvp.js.git#1.2.0",
+    "rsvp": "https://github.com/tildeio/rsvp.js.git#2.0.0",
     "rAF": "https://gist.github.com/paulirish/1579671/raw/3d42a3a76ed09890434a07be2212f376959e616f/rAF.js"
   }
 }
