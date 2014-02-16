@@ -1,6 +1,6 @@
 {
   "name": "App5Support",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "index.html",
   "dependencies": {
     "points": "https://github.com/Rich-Harris/Points.git#75e853355624df6862eb106044bc823bef2d92d2",
